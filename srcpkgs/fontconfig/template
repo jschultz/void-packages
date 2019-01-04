@@ -3,7 +3,7 @@ pkgname=fontconfig
 version=2.13.1
 revision=1
 build_style=gnu-configure
-configure_args="--disable-static --enable-docs --with-cache-dir=/var/cache/${pkgname}"
+configure_args="--enable-static --enable-docs --with-cache-dir=/var/cache/${pkgname}"
 hostmakedepends="gperf pkg-config"
 makedepends="expat-devel freetype-devel libuuid-devel"
 conf_files="/etc/fonts/fonts.conf"
@@ -35,6 +35,7 @@ fontconfig-devel_package() {
 		vmove usr/lib/pkgconfig
 		vmove usr/share/man/man3
 		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
 		vmove usr/share/gettext
 	}
 }

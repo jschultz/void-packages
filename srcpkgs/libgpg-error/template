@@ -3,6 +3,7 @@ pkgname=libgpg-error
 version=1.33
 revision=1
 build_style=gnu-configure
+configure_args="--enable-static"
 short_desc="Library for error values used by GnuPG component"
 maintainer="Juan RP <xtraeme@voidlinux.eu>"
 license="LGPL-2.1-or-later, GPL-2.0-or-later"
@@ -31,5 +32,6 @@ libgpg-error-devel_package() {
 		vmove usr/lib/pkgconfig
 		vmove usr/share/aclocal
 		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
 	}
 }

@@ -4,7 +4,7 @@ version=1.12.12
 revision=1
 build_style=gnu-configure
 configure_args="--disable-selinux --enable-inotify --with-dbus-user=dbus
- --enable-xml-docs --disable-static --disable-tests --enable-epoll
+ --enable-xml-docs --enable-static --disable-tests --enable-epoll
  --disable-asserts --disable-systemd --disable-user-session
  --with-system-socket=/run/dbus/system_bus_socket --disable-doxygen-docs
  --with-system-pid-file=/run/dbus/pid --with-console-auth-dir=/run/console"
@@ -34,6 +34,7 @@ dbus-devel_package() {
 		vmove "usr/lib/dbus-*"
 		vmove usr/lib/pkgconfig
 		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
 		vmove usr/share/doc
 		vmove usr/lib/cmake
 	}

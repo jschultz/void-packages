@@ -8,7 +8,7 @@ version=0.72.0
 revision=1
 wrksrc="poppler-${version}"
 build_style=cmake
-configure_args="-DENABLE_XPDF_HEADERS=on -DENABLE_GLIB=off
+configure_args="-DBUILD_SHARED_LIBS=off -DENABLE_XPDF_HEADERS=on -DENABLE_GLIB=off
  -DENABLE_QT5=on -DENABLE_UTILS=off -DENABLE_CPP=off"
 hostmakedepends="pkg-config qt5-devel"
 makedepends="libpng-devel tiff-devel lcms2-devel libcurl-devel
@@ -29,6 +29,7 @@ post_install() {
 	for f in poppler-cairo poppler-splash poppler; do
 		rm -f ${DESTDIR}/usr/lib/pkgconfig/${f}.pc
 	done
+	touch ${DESTDIR}/usr/lib/libpoppler-qt5.static	# Hack to avoid empty DESTDIR lint error
 }
 
 poppler-qt5-devel_package() {
@@ -36,7 +37,7 @@ poppler-qt5-devel_package() {
 	short_desc+=" - development files"
 	pkg_install() {
 		vmove usr/include/poppler/qt5
-		vmove usr/lib/libpoppler-qt5.so
+		vmove usr/lib/libpoppler-qt5.a
 		vmove usr/lib/pkgconfig/poppler-qt5.pc
 		rm -rf ${DESTDIR}/usr/include
 	}

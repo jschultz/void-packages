@@ -3,7 +3,7 @@ pkgname=libxcb
 version=1.13.1
 revision=2
 build_style=gnu-configure
-configure_args="--disable-build-docs --disable-static --enable-xinput --enable-xkb"
+configure_args="--disable-build-docs --enable-static --enable-xinput --enable-xkb"
 hostmakedepends="automake libtool pkg-config xorg-util-macros xcb-proto"
 makedepends="xcb-proto libXdmcp-devel libXau-devel"
 short_desc="X protocol C-language Binding"
@@ -30,5 +30,6 @@ libxcb-devel_package() {
 		vmove usr/share
 		vmove usr/lib/pkgconfig
 		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
 	}
 }

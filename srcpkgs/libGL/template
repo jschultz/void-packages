@@ -94,6 +94,7 @@ libglapi_package() {
 	short_desc="Free implementation of the GL API - shared library"
 	pkg_install() {
 		vmove "usr/lib/libglapi.so.*"
+		vmove "usr/lib/libglapi_static.a"
 	}
 }
 

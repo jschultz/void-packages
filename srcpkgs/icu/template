@@ -5,6 +5,7 @@ revision=2
 wrksrc=icu
 build_wrksrc=source
 build_style=gnu-configure
+configure_args="--enable-static"
 hostmakedepends="pkg-config"
 short_desc="Robust and full-featured Unicode services"
 maintainer="Juan RP <xtraeme@voidlinux.eu>"
@@ -66,6 +67,7 @@ icu-devel_package() {
 		vmove usr/bin/icu-config
 		vmove "usr/share/man/man1/icu-config*"
 		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
 	}
 }
 icu-libs_package() {

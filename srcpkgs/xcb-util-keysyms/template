@@ -3,7 +3,7 @@ pkgname=xcb-util-keysyms
 version=0.4.0
 revision=2
 build_style=gnu-configure
-configure_args="--disable-static"
+configure_args="--enable-static"
 hostmakedepends="pkg-config"
 makedepends="libxcb-devel xcb-util-devel"
 short_desc="Utility libraries for XC Binding - Standard X key constants and conversion to/from keycodes"
@@ -20,5 +20,6 @@ xcb-util-keysyms-devel_package() {
 		vmove usr/include
 		vmove usr/lib/pkgconfig
 		vmove "usr/lib/*.so"
+		vmove "usr/lib/*.a"
 	}
 }
