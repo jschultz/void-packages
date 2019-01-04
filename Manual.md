@@ -354,6 +354,10 @@ in this directory such as `${XBPS_BUILDDIR}/${wrksrc}`.
 
 - `XBPS_FETCH_CMD` The utility to fetch files from `ftp`, `http` of `https` servers.
 
+- `XBPS_WRAPPERDIR` Full path to where xbps-src's wrappers for utilities are stored.
+
+- `XBPS_CROSS_BASE` Full path to where cross-compile dependencies are installed, varies according to the target architecture triplet. i.e `aarch64` -> `aarch64-unknown-linux-gnu`.
+
 <a id="available_vars"></a>
 ### Available variables
 
@@ -549,6 +553,9 @@ by all supported architectures.
 
 - `nostrip` If set, the ELF binaries with debugging symbols won't be stripped. By
 default all binaries are stripped.
+
+- `nostrip_files` White-space separated list of ELF binaries that won't be stripped of
+debugging symbols.
 
 - `noshlibprovides` If set, the ELF binaries won't be inspected to collect the provided
 sonames in shared libraries.
@@ -1261,7 +1268,9 @@ at post-install time:
 - `pycompile_module`: this variable expects the python modules that should be `byte-compiled`
 at post-install time. Python modules are those that are installed into the `site-packages`
 prefix: `usr/lib/pythonX.X/site-packages`. Multiple python modules may be specified separated
-by blanks, Example: `pycompile_module="foo blah"`.
+by blanks, Example: `pycompile_module="foo blah"`. If a python module installs a file into
+`site-packages` rather than a directory, use the name of the file, Example:
+`pycompile_module="fnord.py"`.
 
 - `pycompile_dirs`: this variable expects the python directories that should be `byte-compiled`
 recursively by the target python version. This differs from `pycompile_module` in that any
@@ -1315,6 +1324,10 @@ The following variables influence how Go packages are built:
   packages; using a versioned distfile is preferred.
 - `go_build_tags`: An optional, space-separated list of build tags to
   pass to Go.
+- `go_mod_mode`: The module download mode to use. May be `off` to ignore
+  any go.mod files, `default` to use Go's default behavior, or anything
+  accepted by `go build -mod MODE`.  Defaults to `vendor` if there's
+  a vendor directory, otherwise `default`.
 
 Occasionally it is necessary to perform operations from within the Go
 source tree.  This is usually needed by programs using go-bindata or
