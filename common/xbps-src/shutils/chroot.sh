@@ -1,5 +1,11 @@
 # vim: set ts=4 sw=4 et:
 
+env_passthrough() {
+    for var in http_proxy https_proxy no_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY ; do
+        [ -n "${!var}" ] && echo -n "${var}=${!var} "
+    done
+}
+
 # FIXME: $XBPS_FFLAGS is not set when chroot_init() is run
 # It is set in common/build-profiles/bootstrap.sh but lost somewhere?
 chroot_init() {
@@ -213,7 +219,7 @@ chroot_handler() {
         [ -n "$XBPS_BINPKG_EXISTS" ] && arg="$arg -E"
 
         action="$arg $action"
-        env -i -- PATH="/usr/bin:/usr/sbin:$PATH" SHELL=/bin/sh \
+        env -i -- `env_passthrough` PATH="/usr/bin:/usr/sbin:$PATH" SHELL=/bin/sh \
             HOME=/tmp IN_CHROOT=1 LC_COLLATE=C LANG=en_US.UTF-8 \
             SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
             $XBPS_COMMONDIR/chroot-style/${XBPS_CHROOT_CMD:=uunshare}.sh \
