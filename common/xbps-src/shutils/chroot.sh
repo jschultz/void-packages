@@ -41,6 +41,8 @@ XBPS_SRC_VERSION="$XBPS_SRC_VERSION"
 
 PATH=/void-packages:/usr/bin:/usr/sbin
 
+update-ca-certificates
+
 exec env -i -- SHELL=/bin/sh PATH="\$PATH" DISTCC_HOSTS="\$XBPS_DISTCC_HOSTS" DISTCC_DIR="/host/distcc" @@XARCH@@ \
     @@CHECK@@ CCACHE_DIR="/host/ccache" IN_CHROOT=1 LC_COLLATE=C LANG=en_US.UTF-8 TERM=linux HOME="/tmp" \
     PS1="[\u@$XBPS_MASTERDIR \W]$ " /bin/bash +h
@@ -117,6 +119,11 @@ chroot_prepare() {
     if [ -s ${XBPS_MASTERDIR}/etc/default/libc-locales ]; then
         echo 'en_US.UTF-8 UTF-8' >> ${XBPS_MASTERDIR}/etc/default/libc-locales
     fi
+    
+    # Copy extra certificates
+    cp /usr/share/ca-certificates/*.pem ${XBPS_MASTERDIR}/usr/share/ca-certificates
+    cp -r /etc/ssl/certs ${XBPS_MASTERDIR}/etc/ssl
+    cd /usr/share/ca-certificates/ && for cert in *.pem; do echo $cert >> ${XBPS_MASTERDIR}/etc/ca-certificates.conf; done
 
     touch -f $XBPS_MASTERDIR/.xbps_chroot_init
     [ -n "$1" ] && echo $1 >> $XBPS_MASTERDIR/.xbps_chroot_init
