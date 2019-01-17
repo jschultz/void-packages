@@ -1,0 +1,20 @@
+--- lib/fetch/http.c	2018-07-30 11:47:08.000000000 +0000
++++ lib/fetch/http.c	2019-01-17 04:26:58.123454978 +0000
+@@ -918,7 +918,7 @@
+ 		if (verbose)
+ 			fetch_info("requesting %s://%s%s",
+ 			    url->scheme, host, url->doc);
+-		if (purl && strcasecmp(URL->scheme, SCHEME_HTTPS) != 0) {
++		if (purl && strcasecmp(url->scheme, SCHEME_HTTPS) != 0) {
+ 			http_cmd(conn, "%s %s://%s%s HTTP/1.1\r\n",
+ 			    op, url->scheme, host, url->doc);
+ 		} else {
+@@ -932,7 +932,7 @@
+ 		/* virtual host */
+ 		http_cmd(conn, "Host: %s\r\n", host);
+ 
+-		if (strcasecmp(URL->scheme, SCHEME_HTTPS) != 0)
++		if (strcasecmp(url->scheme, SCHEME_HTTPS) != 0)
+ 			send_proxy_headers(conn, purl);
+ 
+ 		/* server authorization */
