@@ -1,0 +1,161 @@
+diff --git a/src/extension/link2symlink/link2symlink.c b/src/extension/link2symlink/link2symlink.c
+index 92bb9cf..4b063dd 100644
+--- src/extension/link2symlink/link2symlink.c
++++ src/extension/link2symlink/link2symlink.c
+@@ -381,7 +381,8 @@ static void translated_path(Tracee *tracee, char translated_path[PATH_MAX])
+ 	    || sysnum == PR_link
+ 	    || sysnum == PR_linkat
+ 	    || sysnum == PR_rename
+-	    || sysnum == PR_renameat) {
++	    || sysnum == PR_renameat
++	    || sysnum == PR_renameat2) {
+ 		return;
+ 	}
+ 
+@@ -442,6 +443,7 @@ int link2symlink_callback(Extension *extension, ExtensionEvent event,
+ 			{ PR_stat64,		FILTER_SYSEXIT },
+ 			{ PR_rename,		FILTER_SYSEXIT },
+ 			{ PR_renameat,		FILTER_SYSEXIT },
++			{ PR_renameat2,		FILTER_SYSEXIT },
+ 			FILTERED_SYSNUM_END,
+ 		};
+ 		extension->filtered_sysnums = filtered_sysnums;
+@@ -464,6 +466,7 @@ int link2symlink_callback(Extension *extension, ExtensionEvent event,
+ 			break;
+ 
+ 		case PR_renameat:
++		case PR_renameat2:
+ 			/*int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath);
+ 			 *If newpath is a psuedo hard link decrement the link count.
+ 			 */
+diff --git a/src/syscall/enter.c b/src/syscall/enter.c
+index a8f6406..1ec4259 100644
+--- src/syscall/enter.c
++++ src/syscall/enter.c
+@@ -533,6 +533,7 @@ int translate_syscall_enter(Tracee *tracee)
+ 		break;
+ 
+ 	case PR_renameat:
++	case PR_renameat2:
+ 		olddirfd = peek_reg(tracee, CURRENT, SYSARG_1);
+ 		newdirfd = peek_reg(tracee, CURRENT, SYSARG_3);
+ 
+diff --git a/src/syscall/seccomp.c b/src/syscall/seccomp.c
+index 460fd9e..bffac60 100644
+--- src/syscall/seccomp.c
++++ src/syscall/seccomp.c
+@@ -384,6 +384,7 @@ static FilteredSysnum proot_sysnums[] = {
+ 	{ PR_removexattr,	0 },
+ 	{ PR_rename,		FILTER_SYSEXIT },
+ 	{ PR_renameat,		FILTER_SYSEXIT },
++	{ PR_renameat2,		FILTER_SYSEXIT },
+ 	{ PR_rmdir,		0 },
+ 	{ PR_setrlimit,		FILTER_SYSEXIT },
+ 	{ PR_setxattr,		0 },
+diff --git a/src/syscall/sysnums-arm.h b/src/syscall/sysnums-arm.h
+index d779327..42d3540 100644
+--- src/syscall/sysnums-arm.h
++++ src/syscall/sysnums-arm.h
+@@ -335,4 +335,9 @@ static const Sysnum sysnums_arm[] = {
+ 	[ 375 ] = PR_setns,
+ 	[ 376 ] = PR_process_vm_readv,
+ 	[ 377 ] = PR_process_vm_writev,
++	[ 378 ] = PR_kcmp,
++	[ 379 ] = PR_finit_module,
++	[ 380 ] = PR_sched_setattr,
++	[ 381 ] = PR_sched_getattr,
++	[ 382 ] = PR_renameat2,
+ };
+diff --git a/src/syscall/sysnums-arm64.h b/src/syscall/sysnums-arm64.h
+index 9476c53..f7d7a5e 100644
+--- src/syscall/sysnums-arm64.h
++++ src/syscall/sysnums-arm64.h
+@@ -259,5 +259,8 @@ static const Sysnum sysnums_arm64[] = {
+ 	[ 270 ] = PR_process_vm_readv,
+ 	[ 271 ] = PR_process_vm_writev,
+ 	[ 272 ] = PR_kcmp,
+-	[ 273 ] = PR_syscalls,
++	[ 273 ] = PR_finit_module,
++	[ 274 ] = PR_sched_setattr,
++	[ 275 ] = PR_sched_getattr,
++	[ 276 ] = PR_renameat2,
+ };
+diff --git a/src/syscall/sysnums-i386.h b/src/syscall/sysnums-i386.h
+index 9f2d88b..dff8919 100644
+--- src/syscall/sysnums-i386.h
++++ src/syscall/sysnums-i386.h
+@@ -347,4 +347,8 @@ static const Sysnum sysnums_i386[] = {
+ 	[ 347 ] = PR_process_vm_readv,
+ 	[ 348 ] = PR_process_vm_writev,
+ 	[ 349 ] = PR_kcmp,
++	[ 350 ] = PR_finit_module,
++	[ 351 ] = PR_sched_setattr,
++	[ 352 ] = PR_sched_getattr,
++	[ 353 ] = PR_renameat2,
+ };
+diff --git a/src/syscall/sysnums-x32.h b/src/syscall/sysnums-x32.h
+index ff68414..f987b3b 100644
+--- src/syscall/sysnums-x32.h
++++ src/syscall/sysnums-x32.h
+@@ -272,6 +272,7 @@ static const Sysnum sysnums_x32[] = {
+ 	[ 308 ] = PR_setns,
+ 	[ 309 ] = PR_getcpu,
+ 	[ 312 ] = PR_kcmp,
++	[ 316 ] = PR_renameat2,
+ 	[ 512 ] = PR_rt_sigaction,
+ 	[ 513 ] = PR_rt_sigreturn,
+ 	[ 514 ] = PR_ioctl,
+diff --git a/src/syscall/sysnums-x86_64.h b/src/syscall/sysnums-x86_64.h
+index fe3f822..eb44166 100644
+--- src/syscall/sysnums-x86_64.h
++++ src/syscall/sysnums-x86_64.h
+@@ -314,4 +314,8 @@ static const Sysnum sysnums_x86_64[] = {
+ 	[ 310 ] = PR_process_vm_readv,
+ 	[ 311 ] = PR_process_vm_writev,
+ 	[ 312 ] = PR_kcmp,
++	[ 313 ] = PR_finit_module,
++	[ 314 ] = PR_sched_setattr,
++	[ 315 ] = PR_sched_getattr,
++	[ 316 ] = PR_renameat2,
+ };
+diff --git a/src/syscall/sysnums.list b/src/syscall/sysnums.list
+index 0457f07..7bdc731 100644
+--- src/syscall/sysnums.list
++++ src/syscall/sysnums.list
+@@ -74,6 +74,7 @@ SYSNUM(fcntl)
+ SYSNUM(fcntl64)
+ SYSNUM(fdatasync)
+ SYSNUM(fgetxattr)
++SYSNUM(finit_module)
+ SYSNUM(flistxattr)
+ SYSNUM(flock)
+ SYSNUM(fork)
+@@ -251,6 +252,7 @@ SYSNUM(remap_file_pages)
+ SYSNUM(removexattr)
+ SYSNUM(rename)
+ SYSNUM(renameat)
++SYSNUM(renameat2)
+ SYSNUM(request_key)
+ SYSNUM(restart_syscall)
+ SYSNUM(rmdir)
+@@ -265,10 +267,12 @@ SYSNUM(rt_tgsigqueueinfo)
+ SYSNUM(sched_get_priority_max)
+ SYSNUM(sched_get_priority_min)
+ SYSNUM(sched_getaffinity)
++SYSNUM(sched_getattr)
+ SYSNUM(sched_getparam)
+ SYSNUM(sched_getscheduler)
+ SYSNUM(sched_rr_get_interval)
+ SYSNUM(sched_setaffinity)
++SYSNUM(sched_setattr)
+ SYSNUM(sched_setparam)
+ SYSNUM(sched_setscheduler)
+ SYSNUM(sched_yield)
+@@ -351,7 +355,6 @@ SYSNUM(sync)
+ SYSNUM(sync_file_range)
+ SYSNUM(sync_file_range2)
+ SYSNUM(syncfs)
+-SYSNUM(syscalls)
+ SYSNUM(sysfs)
+ SYSNUM(sysinfo)
+ SYSNUM(syslog)
