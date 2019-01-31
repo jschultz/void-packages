@@ -3,6 +3,7 @@ pkgname=qrencode
 version=4.0.2
 revision=1
 build_style=gnu-configure
+configure_args="--enable-static"
 hostmakedepends="pkg-config"
 makedepends="libpng-devel"
 short_desc="Library for encoding data in a QR Code symbol"
