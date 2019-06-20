@@ -2,14 +2,14 @@
 pkgname=proot
 version=5.1.0
 revision=5
-wrksrc="PRoot-${version}"
+wrksrc="proot-${version}"
 makedepends="libarchive-devel talloc-devel"
 short_desc="User-space implementation of chroot, mount --bind, and binfmt_misc"
 maintainer="Juan RP <xtraeme@voidlinux.eu>"
 license="GPL-2"
 homepage="https://proot-me.github.io"
 distfiles="https://github.com/proot-me/PRoot/archive/v${version}.tar.gz"
-checksum=50fcb882662b2de3e64e603b68d1af75e920d480191a49e11c0cb63d50040386
+checksum=ce0a3baca8312613bd10f65bb436a3aaa28e1034f498a22c35ad0693600e01dd
 
 pre_build() {
 	sed -i "s,strip,:,g" src/GNUmakefile
