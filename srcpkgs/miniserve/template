@@ -1,14 +1,14 @@
 # Template file for 'miniserve'
 pkgname=miniserve
-version=0.2.1
+version=0.3.0
 revision=1
 build_style=cargo
 short_desc="CLI tool to serve files and dirs over HTTP"
-maintainer="Orphaned <orphan@voidlinux.eu>"
+maintainer="Rasmus Thomsen <rasmus.thomsen@protonmail.com>"
 license="MIT"
 homepage="https://github.com/svenstaro/miniserve"
 distfiles="https://github.com/svenstaro/miniserve/archive/v${version}.tar.gz"
-checksum=9d58319ae1dcf460f85114e49939ffeae8b6161de7e9dfaf6a7a985d52e998d4
+checksum=80ee5d661730ddad14671f961b560467f3b3a9f0544b9b11dec65098eb4a1f7e
 
 post_install() {
 	vlicense LICENSE

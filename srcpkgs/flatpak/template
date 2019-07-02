@@ -1,21 +1,30 @@
 # Template file for 'flatpak'
 pkgname=flatpak
-version=1.0.6
+version=1.4.1
 revision=1
 build_style=gnu-configure
-configure_args="--disable-documentation --with-system-bubblewrap"
+build_helper="gir"
+configure_args="--disable-documentation --with-system-bubblewrap
+ $(vopt_enable gir introspection)"
 hostmakedepends="bubblewrap glib-devel libxslt pkg-config bison"
 makedepends="appstream-glib-devel gpgme-devel json-glib-devel libcap-devel
- libostree-devel libseccomp-devel polkit-devel"
+ libostree-devel libseccomp-devel polkit-devel dconf-devel fuse-devel"
+depends="bubblewrap gnupg2"
 checkdepends="bubblewrap dbus"
-depends="bubblewrap"
 short_desc="Application sandboxing and distribution framework"
-maintainer="Duncaen <duncaen@voidlinux.eu>"
+maintainer="Duncaen <duncaen@voidlinux.org>"
 license="LGPL-2.1-or-later"
 homepage="https://flatpak.org/"
 changelog="https://github.com/flatpak/flatpak/blob/master/NEWS"
 distfiles="https://github.com/flatpak/flatpak/releases/download/${version}/flatpak-${version}.tar.xz"
-checksum=b7a256853a57862ce165ca2f458c24e5addefedd74af9fce5b640d8dc315a2e8
+checksum=85ccf052e8131c629ab9934dca4c5019efd448b96d35596e56d5b531fb0b0078
+
+build_options="gir"
+build_options_default="gir"
+
+if [ "$CROSS_BUILD" ]; then
+	configure_args+=" --enable-selinux-module=no"
+fi
 
 post_install() {
 	rm -rf $DESTDIR/usr/lib/systemd

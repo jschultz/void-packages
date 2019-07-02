@@ -2,13 +2,13 @@
 pkgname=bsdbuild
 version=3.1
 revision=2
-noarch=yes
+archs=noarch
 build_style=gnu-configure
 configure_args="--with-manpages --with-manlinks"
 hostmakedepends="groff perl"
 depends="perl"
 short_desc="Simple, self-contained and portable build system"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="BSD-2-Clause"
 homepage="http://hypertriton.com/bsdbuild/"
 distfiles="http://stable.hypertriton.com/bsdbuild/$pkgname-$version.tar.gz"

@@ -2,13 +2,13 @@
 pkgname=indic-otf
 version=0.2
 revision=3
-noarch=yes
+archs=noarch
 wrksrc=indic
 build_wrksrc=OpenType
 makedepends="font-util xbps-triggers"
 depends="${makedepends}"
 short_desc="Indic OpenType fonts collection"
-maintainer="Duncaen <duncaen@voidlinux.eu>"
+maintainer="Duncaen <duncaen@voidlinux.org>"
 license="GPL-2.0-or-later"
 homepage="http://www.indlinux.org/wiki/index.php/Downloads"
 distfiles="http://www.indlinux.org/downloads/files/indic-otf-${version}.tar.gz"

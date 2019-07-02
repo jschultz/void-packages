@@ -1,17 +1,17 @@
 # Template file for 'kbookmarks'
 pkgname=kbookmarks
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules qt5-qmake qt5-host-tools qt5-tools"
+hostmakedepends="kcoreaddons extra-cmake-modules kcoreaddons qt5-qmake qt5-host-tools qt5-tools"
 makedepends="kxmlgui-devel"
 short_desc="KDE Bookmarks management library"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-only"
 homepage="https://projects.kde.org/projects/frameworks/kbookmarks"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=29b782b48c80add374d0f209904a37950055f2803456f5d55f41d51c355f3fd7
+checksum=e623b0c353ae0217f31fad7e7887e37cd6ba81f75a4b0159dc1f7a2a4d1152f6
 
 kbookmarks-devel_package() {
 	short_desc+=" - development"

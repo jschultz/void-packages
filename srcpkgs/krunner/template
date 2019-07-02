@@ -1,17 +1,17 @@
 # Template file for 'krunner'
 pkgname=krunner
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules"
+hostmakedepends="kcoreaddons extra-cmake-modules"
 makedepends="plasma-framework-devel threadweaver-devel"
 short_desc="KDE Framework for Plasma runners"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/frameworks/krunner"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=9480d4cecd9e1de2c386d09353c63881889bd2ee657d6ffe733086893011c826
+checksum=88ad3b08d283e3ed87edf0421b2bc1e6e25b28ce261d9bb37b77f0f33209f602
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake"

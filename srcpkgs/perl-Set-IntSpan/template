@@ -2,14 +2,14 @@
 pkgname=perl-Set-IntSpan
 version=1.19
 revision=2
-noarch=yes
+archs=noarch
 wrksrc="Set-IntSpan-$version"
 build_style=perl-module
 hostmakedepends="perl"
 makedepends="perl"
 depends="perl"
 short_desc="Set::IntSpan - Manages sets of integers"
-maintainer="Orphaned <orphan@voidlinux.eu>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="Artistic-1.0-Perl, GPL-1.0-or-later"
 homepage="https://metacpan.org/release/Set-IntSpan"
 distfiles="${CPAN_SITE}/Set/Set-IntSpan-${version}.tar.gz"

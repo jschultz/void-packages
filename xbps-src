@@ -1,6 +1,8 @@
 #!/bin/bash
 # vim: set ts=4 sw=4 et:
 
+readonly PROGNAME="${0##*/}"
+
 print_cross_targets() {
     local f
     for f in common/cross-profiles/*.sh; do
@@ -10,7 +12,7 @@ print_cross_targets() {
 
 usage() {
     cat << _EOF
-$(basename $0): [options] <target> [arguments]
+$PROGNAME: [options] <target> [arguments]
 
 Targets: (only one may be specified)
 
@@ -27,42 +29,49 @@ bootstrap-update
     Updates bootstrap packages with latest versions available from registered
     repositories in the XBPS configuration file.
 
-build <pkgname>
-    Build package source (fetch + extract + configure + build).
-
-check <pkgname>
-    Run the package check(s) after building the package source.
-
 consistency-check
     Runs a consistency check on all packages
 
 chroot
     Enter to the chroot in <masterdir>.
 
-clean [pkgname]
-    Removes auto dependencies, cleans up <masterdir>/builddir and <masterdir>/destdir.
-    If <pkgname> argument is specified, package files from <masterdir>/destdir and its
-    build directory in <masterdir>/buiddir are removed.
+clean-repocache
+    Removes obsolete packages from <hostdir>/repocache.
 
-configure <pkgname>
-    Configure a package (fetch + extract + configure).
+fetch <pkgname>
+    Download package source distribution file(s).
 
 extract <pkgname>
     Extract package source distribution file(s) into the build directory.
     By default set to <masterdir>/builddir.
 
-fetch <pkgname>
-    Download package source distribution file(s).
+patch <pkgname>
+    Patch the package sources and perform other operations required to
+    prepare a package for configuring and building
+
+configure <pkgname>
+    Configure a package (fetch + extract + patch + configure).
+
+build <pkgname>
+    Build package source (fetch + extract + patch + configure + build).
+
+check <pkgname>
+    Run the package check(s) after building the package source.
 
 install <pkgname>
     Install target package into <destdir> but not building the binary package
     and not removing build directory for inspection purposes.
 
-list
-    Lists installed packages in <masterdir>.
-
 pkg <pkgname>
     Build binary package for <pkgname> and all required dependencies.
+
+clean [pkgname]
+    Removes auto dependencies, cleans up <masterdir>/builddir and <masterdir>/destdir.
+    If <pkgname> argument is specified, package files from <masterdir>/destdir and its
+    build directory in <masterdir>/buiddir are removed.
+
+list
+    Lists installed packages in <masterdir>.
 
 remove <pkgname>
     Remove target package from <destdir>. If <pkgname>-<version> is not matched
@@ -91,6 +100,12 @@ show-deps <pkgname>
 show-files <pkgname>
     Show files installed by <pkgname>. Package must be installed into destdir.
 
+show-hostmakedepends <pkgname>
+    Show required host build dependencies for <pkgname>.
+
+show-makedepends <pkgname>
+    Show required target build dependencies for <pkgname>.
+
 show-options <pkgname>
     Show available build options by <pkgname>.
 
@@ -107,7 +122,7 @@ show-repo-updates
     Prints the list of outdated packages in XBPS repositories.
 
 show-sys-updates
-    Prints the list of oudated packages in your system.
+    Prints the list of outdated packages in your system.
 
 sort-dependencies <pkg> <pkgN+1> ...
     Given a list of packages specified as additional arguments, a sorted dependency
@@ -235,9 +250,6 @@ check_config_vars() {
 check_build_requirements() {
     local found
 
-    for f in $XBPS_SHUTILSDIR/*.sh; do
-        [ -r $f ] && . $f
-    done
     case "$XBPS_TARGET" in
         *bootstrap*) found=1;;
         *) ;;
@@ -248,29 +260,6 @@ check_build_requirements() {
             echo "ERROR: requires xbps>=${XBPS_VERSION_REQ}"
             echo "Bootstrap packages must be updated with 'xbps-src bootstrap-update'"
             exit 1
-        fi
-    fi
-    # Set XBPS_REPOSITORY to our current branch.
-    if [ -z "$XBPS_ALT_REPOSITORY" ]; then
-        pushd "$PWD" &>/dev/null
-        cd $XBPS_DISTDIR
-        if [ -n "$IN_CHROOT" ]; then
-            _gitbranch="$(chroot-git symbolic-ref --short HEAD 2>/dev/null)"
-        else
-            _gitbranch="$(git symbolic-ref --short HEAD 2>/dev/null)"
-        fi
-        if [ -n "${_gitbranch}" -a "${_gitbranch}" != "master" ]; then
-            export XBPS_ALT_REPOSITORY="${_gitbranch}"
-            export XBPS_REPOSITORY="${XBPS_REPOSITORY}/${_gitbranch}"
-            if [ -z "$IN_CHROOT" ]; then
-                msg_normal "Using \`$XBPS_REPOSITORY\' as local repository.\n"
-            fi
-        fi
-        popd &>/dev/null
-    else
-        export XBPS_REPOSITORY="${XBPS_REPOSITORY}/${XBPS_ALT_REPOSITORY}"
-        if [ -z "$IN_CHROOT" ]; then
-            msg_normal "Using \`$XBPS_REPOSITORY\' as local repository.\n"
         fi
     fi
 }
@@ -308,6 +297,8 @@ install_bbootstrap() {
 
     msg_normal "Installed bootstrap successfully!\n"
     chroot_prepare $XBPS_TARGET_PKG || msg_error "Failed to initialize chroot!\n"
+    chroot_check
+    chroot_handler clean
 }
 
 reconfigure_bootstrap_pkgs() {
@@ -365,14 +356,10 @@ exit_func() {
     exit 2
 }
 
-basename_cwd() {
-    echo $(basename $(pwd))
-}
-
 read_pkg() {
     if [ -z "${XBPS_TARGET_PKG}" ]; then
         [ ! -r ./template ] && msg_error "missing build template in $(pwd).\n"
-        XBPS_TARGET_PKG=$(basename_cwd)
+        XBPS_TARGET_PKG=${PWD##*/}
     fi
     setup_pkg "$XBPS_TARGET_PKG" "$XBPS_CROSS_BUILD" "$1"
 }
@@ -403,14 +390,10 @@ setup_distfiles_mirror() {
     done
 }
 
-readonly XBPS_VERSION_REQ="0.46"
+readonly XBPS_VERSION_REQ="0.55"
 readonly XBPS_VERSION=$(xbps-uhelper -V|awk '{print $2}')
 readonly XBPS_SRC_VERSION="113"
 export XBPS_MACHINE=$(xbps-uhelper arch)
-readonly XBPS_GCC_VERSION_MAJOR=8
-readonly XBPS_GCC_VERSION_MINOR=2
-readonly XBPS_GCC_VERSION_BUILD=0
-readonly XBPS_GCC_VERSION=${XBPS_GCC_VERSION_MAJOR}.${XBPS_GCC_VERSION_MINOR}.${XBPS_GCC_VERSION_BUILD}
 
 #
 # main()
@@ -426,7 +409,7 @@ while getopts "$XBPS_OPTSTRING" opt; do
         1) export XBPS_BUILD_ONLY_ONE_PKG=yes; XBPS_OPTIONS+=" -1";;
         a) readonly XBPS_CROSS_BUILD="$OPTARG"; XBPS_OPTIONS+=" -a $OPTARG";;
         C) readonly XBPS_KEEP_ALL=1; XBPS_OPTIONS+=" -C";;
-        E) readonly XBPS_BINPKG_EXISTS=1; XBPS_OPTIONS+=" -E";;
+        E) export XBPS_BINPKG_EXISTS=1; XBPS_OPTIONS+=" -E";;
         f) readonly XBPS_BUILD_FORCEMODE=1; XBPS_OPTIONS+=" -f";;
         G) readonly XBPS_USE_GIT_REVS=1; XBPS_OPTIONS+=" -G";;
         g) readonly XBPS_DEBUG_PKGS=1; XBPS_OPTIONS+=" -g";;
@@ -451,6 +434,13 @@ shift $(($OPTIND - 1))
 
 [ $# -eq 0 ] && usage && exit 1
 
+# Check if stdout is a tty; if false disable colors.
+test -t 1 || export NOCOLORS=1
+# http://no-color.org
+if [ -n "${NO_COLOR+x}" ]; then
+    export NOCOLORS=1
+fi
+
 umask 022
 
 #
@@ -462,15 +452,30 @@ readonly REQHOST_UTILS_BOOTSTRAP="make gawk bash bison sed gcc g++ msgfmt makein
 
 # Required utilities in host system for chroot ops.
 readonly REQHOST_UTILS="xbps-install xbps-query xbps-rindex xbps-uhelper \
-    xbps-reconfigure xbps-remove xbps-create xbps-uchroot xbps-uunshare git"
+    xbps-reconfigure xbps-remove xbps-create xbps-uchroot xbps-uunshare"
 
 check_reqhost_utils
+
+# Try using chroot-git then git from the host system
+if command -v chroot-git &>/dev/null; then
+	XBPS_GIT_CMD=$(command -v chroot-git)
+elif command -v git &>/dev/null; then
+	XBPS_GIT_CMD=$(command -v git)
+else
+    echo "neither chroot-git or git are available in your system!"
+    exit 1
+fi
+
+readonly XBPS_GIT_CMD
 
 if [ -n "$IN_CHROOT" ]; then
     readonly XBPS_CONFIG_FILE=/etc/xbps/xbps-src.conf
     readonly XBPS_DISTDIR=/void-packages
+    # needed before call to check_config_vars
+    readonly XBPS_MASTERDIR=/
+    readonly XBPS_HOSTDIR=/host
 else
-    _distdir="$(readlink -f $(dirname $0))"
+    _distdir="$(readlink -f ${0%/*})"
     if [ "${_distdir}" = "." ]; then
         readonly XBPS_DISTDIR="$(pwd -P)"
     else
@@ -495,6 +500,10 @@ fi
 #
 check_config_vars
 
+for f in $XBPS_DISTDIR/common/xbps-src/shutils/*.sh; do
+    [ -r $f ] && . $f
+done
+
 if [ -n "$XBPS_HOSTDIR" ]; then
     export XBPS_REPOSITORY=$XBPS_HOSTDIR/binpkgs
     readonly XBPS_SRCDISTDIR=$XBPS_HOSTDIR/sources
@@ -502,6 +511,31 @@ else
     export XBPS_REPOSITORY=$XBPS_MASTERDIR/host/binpkgs
     readonly XBPS_SRCDISTDIR=$XBPS_MASTERDIR/host/sources
 fi
+
+# Set XBPS_REPOSITORY to our current branch.
+if [ -z "$XBPS_ALT_REPOSITORY" ]; then
+    pushd "$PWD" &>/dev/null
+    cd $XBPS_DISTDIR
+    if [ -n "$IN_CHROOT" ]; then
+        _gitbranch="$(chroot-git symbolic-ref --short HEAD 2>/dev/null)"
+    else
+        _gitbranch="$($XBPS_GIT_CMD symbolic-ref --short HEAD 2>/dev/null)"
+    fi
+    if [ -n "${_gitbranch}" -a "${_gitbranch}" != "master" ]; then
+        export XBPS_ALT_REPOSITORY="${_gitbranch}"
+        export XBPS_REPOSITORY="${XBPS_REPOSITORY}/${_gitbranch}"
+        if [ -z "$IN_CHROOT" ]; then
+            msg_normal "Using \`$XBPS_REPOSITORY\' as local repository.\n"
+        fi
+     fi
+     popd &>/dev/null
+else
+    export XBPS_REPOSITORY="${XBPS_REPOSITORY}/${XBPS_ALT_REPOSITORY}"
+    if [ -z "$IN_CHROOT" ]; then
+        msg_normal "Using \`$XBPS_REPOSITORY\' as local repository.\n"
+    fi
+fi
+
 if [ -n "$IN_CHROOT" ]; then
     readonly XBPS_UHELPER_CMD="xbps-uhelper"
     readonly XBPS_INSTALL_CMD="xbps-install"
@@ -518,6 +552,7 @@ if [ -n "$IN_CHROOT" ]; then
     readonly XBPS_CROSSPFDIR=$XBPS_COMMONDIR/cross-profiles
     readonly XBPS_BUILDSTYLEDIR=$XBPS_COMMONDIR/build-style
     readonly XBPS_LIBEXECDIR=$XBPS_COMMONDIR/xbps-src/libexec
+    readonly XBPS_BUILDHELPERDIR=$XBPS_COMMONDIR/build-helper
 else
     readonly XBPS_UHELPER_CMD="xbps-uhelper -r $XBPS_MASTERDIR"
     readonly XBPS_INSTALL_CMD="xbps-install -C /dev/null -c $XBPS_HOSTDIR/repocache --repository=$XBPS_REPOSITORY -r $XBPS_MASTERDIR"
@@ -534,10 +569,10 @@ else
     readonly XBPS_CROSSPFDIR=$XBPS_COMMONDIR/cross-profiles
     readonly XBPS_BUILDSTYLEDIR=$XBPS_COMMONDIR/build-style
     readonly XBPS_LIBEXECDIR=$XBPS_COMMONDIR/xbps-src/libexec
+    readonly XBPS_BUILDHELPERDIR=$XBPS_COMMONDIR/build-helper
 fi
-# XBPS_FETCH_CMD can be overriden
-export XBPS_FETCH_CMD="xbps-uhelper fetch"
-readonly XBPS_DIGEST_CMD="xbps-uhelper digest"
+readonly XBPS_FETCH_CMD="xbps-fetch"
+readonly XBPS_DIGEST_CMD="xbps-digest"
 readonly XBPS_CMPVER_CMD="xbps-uhelper cmpver"
 
 readonly XBPS_TARGET="$1"
@@ -545,16 +580,13 @@ if [ -n "$2" ]; then
     XBPS_TARGET_PKG="${2##*/}"
 fi
 
-# Check if stdout is a tty; if false disable colors.
-test -t 1 || export NOCOLORS=1
-# http://no-color.org
-if [ -n "${NO_COLOR+x}" ]; then
-    export NOCOLORS=1
-fi
+chroot_check() {
+    if [ -f $XBPS_MASTERDIR/.xbps_chroot_init -o "$XBPS_CHROOT_CMD" = "ethereal" ]; then
+        export CHROOT_READY=1
+    fi
+}
 
-if [ -f $XBPS_MASTERDIR/.xbps_chroot_init ]; then
-    export CHROOT_READY=1
-fi
+chroot_check
 
 if [ -z "$XBPS_REINIT" -a -s $XBPS_MASTERDIR/.xbps_chroot_init ]; then
     export XBPS_ARCH=${XBPS_ARCH:-$(cat $XBPS_MASTERDIR/.xbps_chroot_init)}
@@ -573,6 +605,7 @@ if [ -z "$XBPS_TARGET_MACHINE" ]; then
     export XBPS_TARGET_MACHINE=${XBPS_ARCH:=$XBPS_MACHINE}
 fi
 
+
 export XBPS_SHUTILSDIR XBPS_CROSSPFDIR XBPS_TRIGGERSDIR \
     XBPS_SRCPKGDIR XBPS_COMMONDIR XBPS_BUILDDIR XBPS_REPO_DELTAS \
     XBPS_REPOSITORY XBPS_ALT_REPOSITORY XBPS_SRCDISTDIR XBPS_DIGEST_CMD \
@@ -584,10 +617,9 @@ export XBPS_SHUTILSDIR XBPS_CROSSPFDIR XBPS_TRIGGERSDIR \
     XBPS_CHECK_PKGS XBPS_CCACHE XBPS_DISTCC XBPS_DISTCC_HOSTS XBPS_SKIP_DEPS \
     XBPS_SKIP_REMOTEREPOS XBPS_CROSS_BUILD XBPS_PKG_OPTIONS XBPS_CONFIG_FILE \
     XBPS_KEEP_ALL XBPS_HOSTDIR XBPS_MASTERDIR XBPS_SRC_VERSION \
-    XBPS_DESTDIR XBPS_MACHINE XBPS_GCC_VERSION_MAJOR XBPS_GCC_VERSION_MINOR \
-    XBPS_GCC_VERSION_BUILD XBPS_GCC_VERSION XBPS_TEMP_MASTERDIR XBPS_BINPKG_EXISTS \
+    XBPS_DESTDIR XBPS_MACHINE XBPS_TEMP_MASTERDIR XBPS_BINPKG_EXISTS \
     XBPS_LIBEXECDIR XBPS_DISTDIR XBPS_DISTFILES_MIRROR XBPS_ALLOW_RESTRICTED \
-    XBPS_USE_GIT_COMMIT_DATE XBPS_PKG_COMPTYPE
+    XBPS_USE_GIT_COMMIT_DATE XBPS_PKG_COMPTYPE XBPS_REPO_COMPTYPE XBPS_BUILDHELPERDIR
 
 for i in REPOSITORY DESTDIR BUILDDIR SRCDISTDIR; do
     eval val="\$XBPS_$i"
@@ -671,7 +703,11 @@ case "$XBPS_TARGET" in
         install_bbootstrap bootstrap
         ;;
     bootstrap-update)
-        bootstrap_update
+        if [ -n "$CHROOT_READY" -a -z "$IN_CHROOT" ]; then
+            chroot_handler bootstrap-update
+        else
+            bootstrap_update
+        fi
         ;;
     chroot)
         chroot_handler chroot dummy
@@ -684,7 +720,8 @@ case "$XBPS_TARGET" in
                 remove_pkg_autodeps
             fi
             msg_normal "xbps-src: cleaning up masterdir...\n"
-            chmod -R +wX $XBPS_MASTERDIR/builddir # Needed to remove Go Modules
+            # Needed to remove Go Modules
+            [ -d $XBPS_MASTERDIR/builddir ] && chmod -R +wX $XBPS_MASTERDIR/builddir
             rm -rf $XBPS_MASTERDIR/builddir $XBPS_MASTERDIR/destdir
             rm -f $XBPS_MASTERDIR/tmp/* >/dev/null 2>&1
         else
@@ -701,6 +738,10 @@ case "$XBPS_TARGET" in
             remove_pkg $XBPS_CROSS_BUILD
         fi
         ;;
+    clean-repocache)
+        export XBPS_TARGET_ARCH="${XBPS_CROSS_BUILD:-$XBPS_TARGET_MACHINE}"
+        $XBPS_REMOVE_CMD -C /dev/null -c $XBPS_HOSTDIR/repocache -O
+        ;;
     consistency-check)
         consistency_check
         ;;
@@ -711,7 +752,7 @@ case "$XBPS_TARGET" in
             remove_pkg_autodeps
         fi
         ;;
-    fetch|extract|build|check|configure|install|pkg)
+    fetch|extract|patch|configure|build|check|install|pkg)
         if [ "$XBPS_TARGET" = "check" ]; then
             export XBPS_CHECK_PKGS=1
         fi
@@ -754,6 +795,14 @@ case "$XBPS_TARGET" in
         read_pkg ignore-problems
         show_pkg_build_deps
         ;;
+    show-hostmakedepends)
+        read_pkg ignore-problems
+        show_pkg_hostmakedepends
+        ;;
+    show-makedepends)
+        read_pkg ignore-problems
+        show_pkg_makedepends
+        ;;
     show-pkg-var)
         read_pkg ignore-problems
         for sub_name in $subpackages; do
@@ -769,9 +818,7 @@ case "$XBPS_TARGET" in
 		    depends) print_var="$depends ";;
 		    hostmakedepends) print_var="$hostmakedepends ";;
 		    makedepends) print_var="$makedepends ";;
-		    noarch) print_var="$noarch ";;
 		    nocross) print_var="$nocross ";;
-		    only_for_archs) print_var="$only_for_archs ";;
 		    pkgname) print_var="$pkgname ";;
 		    restricted) print_var="$restricted ";;
 		    revision) print_var="$revision ";;

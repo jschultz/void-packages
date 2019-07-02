@@ -1,8 +1,8 @@
 # Template file for 'ruby-multi_json'
 pkgname=ruby-multi_json
 version=1.13.1
-revision=1
-noarch=yes
+revision=2
+archs=noarch
 build_style=gem
 short_desc="Common interface for multiple JSON parsing libraries"
 maintainer="maxice8 <thinkabit.ukim@gmail.com>"

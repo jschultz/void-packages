@@ -2,12 +2,12 @@
 pkgname=gsfonts
 version=8.11
 revision=5
-noarch=yes
+archs=noarch
 wrksrc=fonts
 makedepends="font-util font-misc-misc"
 depends="${makedepends}"
 short_desc="Ghostscript standard Type1 fonts"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-or-later"
 homepage="http://sourceforge.net/projects/gs-fonts/"
 distfiles="${SOURCEFORGE_SITE}/ghostscript/ghostscript-fonts-std-${version}.tar.gz"

@@ -53,6 +53,7 @@ genpkg() {
 	local _conf_files="$(expand_destdir "$conf_files")"
 	local _alternatives="$(echo $alternatives)"
 	local _tags="$(echo $tags)"
+	local _changelog="$(echo $changelog)"
 
 	msg_normal "Creating $binpkg for repository $pkgdir ...\n"
 
@@ -74,6 +75,7 @@ genpkg() {
 		${_alternatives:+--alternatives "${_alternatives}"} \
 		${_preserve:+--preserve} \
 		${tags:+--tags "${tags}"} \
+		${_changelog:+--changelog "${_changelog}"} \
 		--architecture ${arch} \
 		--homepage "${homepage}" \
 		--license "${license}" \
@@ -97,14 +99,14 @@ hook() {
 	local arch= binpkg= repo= _pkgver= _desc= _pkgn= _pkgv= _provides= \
 		_replaces= _reverts= f= found_dbg_subpkg=
 
-	if [ -n "$noarch" ]; then
+	if [ "${archs// /}" = "noarch" ]; then
 		arch=noarch
 	elif [ -n "$XBPS_TARGET_MACHINE" ]; then
 		arch=$XBPS_TARGET_MACHINE
 	else
 		arch=$XBPS_MACHINE
 	fi
-	if [ -z "$noarch" -a -z "$XBPS_CROSS_BUILD" -a -n "$XBPS_ARCH" -a "$XBPS_ARCH" != "$XBPS_TARGET_MACHINE" ]; then
+	if [ "${archs// /}" != "noarch" -a -z "$XBPS_CROSS_BUILD" -a -n "$XBPS_ARCH" -a "$XBPS_ARCH" != "$XBPS_TARGET_MACHINE" ]; then
 		arch=${XBPS_ARCH}
 	fi
 

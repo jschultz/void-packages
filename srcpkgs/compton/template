@@ -1,20 +1,20 @@
 # Template file for 'compton'
 pkgname=compton
-version=4
-revision=2
+version=6.2
+revision=1
 build_style=meson
 configure_args="-Dbuild_docs=true"
 hostmakedepends="pkg-config asciidoc"
 makedepends="MesaLib-devel dbus-devel libconfig-devel libev-devel pcre-devel
- pixman-devel xcb-util-image-devel xcb-util-renderutil-devel"
+ pixman-devel xcb-util-image-devel xcb-util-renderutil-devel
+ libxdg-basedir-devel"
 depends="desktop-file-utils"
 short_desc="Compositor for X11 (fork of xcompmgr-dana)"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="MIT, MPL-2.0"
 homepage="https://github.com/yshui/compton/"
 distfiles="https://github.com/yshui/compton/archive/v${version}.tar.gz"
-checksum=aacafc24d6023d2ee28be77966421a73291936b05c54b5627999916d8822c43f
-replaces="compton-git>=0"
+checksum=1333133ca9dfea768256c3fff8362d12a98b4d129e6ab1e56b1e630353f269bb
 
 pre_build() {
 	export COMPTON_VERSION="v${version}"

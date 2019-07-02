@@ -1,34 +1,26 @@
 # Template file for 'nomad'
 pkgname=nomad
-version=0.8.6
+version=0.9.3
 revision=1
 build_style=go
-go_import_path="github.com/hashicorp/nomad"
-hostmakedepends="git govendor"
+go_import_path="github.com/hashicorp/${pkgname}"
+go_build_tags="ui release"
+_git_commit=23c4597dbb6d1d46e020301b0f63db5cff80d3f0
+go_ldflags="-X ${go_import_path}/version.GitCommit=${_git_commit}"
+hostmakedepends="git"
 short_desc="Cluster scheduler designed to easily integrate into existing workflows"
 maintainer="iaroki <iaroki@protonmail.com>"
 license="MPL-2.0"
 homepage="https://www.nomadproject.io/"
 distfiles="https://${go_import_path}/archive/v${version}.tar.gz"
-checksum=e69b447dcc2caeb3d5ecf904cf3c8f327a5185a84442ee4241a796d89f96e143
+checksum=65ae3d7c7c88f9a344f88c2444356662eaa16683d0033bf9fbff691633f4e6fe
 patch_args="-Np1"
 
-pre_build() {
-	# NOTE: This can probably be removed in nomad 0.9.x if Hashicorp updates
-	# their golang.org/x/crypto/blake2b dependency.
-	cd "$GOSRCPATH"
-	govendor fetch golang.org/x/sys/cpu@1b2967e3c290b7c545b3db0deeda16e9be4f98a2
-	govendor fetch golang.org/x/crypto/blake2b@de0752318171da717af4ce24d0a2e8626afaeb11
-	cd -
-}
+case "$XBPS_TARGET_MACHINE" in
+	*-musl) go_build_tags+=" nonvidia" ;;
+esac
 
-do_build() {
-	: ${go_package:=$go_import_path}
-	go build -o bin/nomad -x -tags "${go_build_tags}" -ldflags "${go_ldflags}" ${go_package}
-}
-
-do_install() {
-	vbin bin/nomad
+post_install() {
 	vlicense LICENSE
 	vsconf dist/server.hcl
 	vsconf dist/client.hcl

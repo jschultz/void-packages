@@ -2,14 +2,14 @@
 pkgname=perl-IO-String
 version=1.08
 revision=2
-noarch=yes
+archs=noarch
 wrksrc="IO-String-${version}"
 build_style=perl-module
 hostmakedepends="perl"
 makedepends="perl"
 depends="perl"
 short_desc="IO::String - Emulate file interface for in-core strings"
-maintainer="Orphaned <orphan@voidlinux.eu>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="Artistic-1.0-Perl, GPL-1.0-or-later"
 homepage="https://metacpan.org/release/IO-String"
 distfiles="${CPAN_SITE}/IO/IO-String-${version}.tar.gz"

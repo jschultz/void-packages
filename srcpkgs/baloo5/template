@@ -1,19 +1,19 @@
 # Template file for 'baloo5'
 pkgname=baloo5
-version=5.53.0
-revision=1
+version=5.59.0
+revision=2
 wrksrc="${pkgname%5}-${version}"
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules"
-makedepends="kfilemetadata5-devel kidletime-devel kio-devel lmdb-devel"
+hostmakedepends="kcoreaddons extra-cmake-modules"
+makedepends="kfilemetadata5-devel kidletime-devel kio-devel ksolid-devel lmdb-devel"
 depends="hicolor-icon-theme"
-short_desc="A framework for searching and managing metadata"
+short_desc="Framework for searching and managing metadata"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
-homepage="https://projects.kde.org/projects/frameworks/baloo5"
+homepage="https://community.kde.org/Baloo"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname%5}-${version}.tar.xz"
-checksum=e805f6f97ba9bc9a396653ae14bcdcf80502a5508d6f130b8f4ca9fcdee97dcb
+checksum=306425209bc6b653450befa2eebc7ec60629e096e88d57af8ee6ca9e0c6430e1
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake python kcoreaddons"

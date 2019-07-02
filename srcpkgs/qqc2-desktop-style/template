@@ -1,16 +1,16 @@
 # Template file for 'qqc2-desktop-style'
 pkgname=qqc2-desktop-style
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
-hostmakedepends="qt5-qmake qt5-host-tools extra-cmake-modules"
+hostmakedepends="kcoreaddons qt5-qmake qt5-host-tools extra-cmake-modules"
 makedepends="kirigami2-devel kiconthemes-devel"
 short_desc="Style for Qt Quick Controls 2 to make it follow your desktop theme"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-or-later, LGPL-3.0-only, GPL-2.0-or-later"
 homepage="https://projects.kde.org/projects/framework/qqc2-desktop-style"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=04d4ed66dd50d0221a04011da8d01376cfbf6b4306760414d0c57e8eeb7027b8
+checksum=7ede37f846e0da292f1d728baf963d795793cfcabe50a4ab889b5e92482ea05d
 
 qqc2-desktop-style-devel_package() {
 	depends="${sourcepkg}>=${version}_${revision}"

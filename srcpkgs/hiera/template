@@ -1,13 +1,13 @@
 # Template file for 'hiera'
 pkgname=hiera
 version=3.5.0
-revision=1
-noarch=yes
+revision=2
+archs=noarch
 build_style=ruby-module
 hostmakedepends="ruby"
 depends="ruby"
-short_desc="A simple pluggable Hierarchical Database"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+short_desc="Simple pluggable Hierarchical Database"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="Apache-2.0"
 homepage="http://projects.puppetlabs.com/projects/hiera"
 distfiles="http://github.com/puppetlabs/${pkgname}/archive/${version}.tar.gz"

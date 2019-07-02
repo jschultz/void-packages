@@ -1,8 +1,8 @@
 # Template file for 'wpgtk'
 pkgname=wpgtk
-version=5.8.5
+version=5.8.7
 revision=1
-noarch=yes
+archs=noarch
 build_style=python3-module
 pycompile_module="wpgtk"
 hostmakedepends="python3-setuptools"
@@ -12,4 +12,4 @@ maintainer="travankor <travankor@tuta.io>"
 license="GPL-2.0-only"
 homepage="https://github.com/deviantfero/wpgtk/"
 distfiles="https://github.com/deviantfero/wpgtk/archive/${version}.tar.gz"
-checksum=f361996d273c36e9a547d67737ec606abd313e3c2681cf0af4e79bdfd3afa117
+checksum=2ad72c5efc7966dcb5b79581346fe0f3dda3cbeb8325b35b9ff49e4fb6f099f5

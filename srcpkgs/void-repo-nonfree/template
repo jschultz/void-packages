@@ -1,13 +1,13 @@
 # Template file for 'void-repo-nonfree'
 pkgname=void-repo-nonfree
 version=9
-revision=3
-noarch=yes
+revision=4
+archs=noarch
 build_style=meta
 short_desc="Void Linux drop-in file for the nonfree repository"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="Public Domain"
-homepage="http://www.voidlinux.eu"
+homepage="http://www.voidlinux.org"
 
 do_install() {
 	vmkdir usr/share/xbps.d
@@ -34,7 +34,7 @@ do_install() {
 }
 
 void-repo-debug_package() {
-	noarch=yes
+	archs=noarch
 	short_desc="${short_desc/nonfree/debug}"
 	pkg_install() {
 		vmove usr/share/xbps.d/20-repository-debug.conf

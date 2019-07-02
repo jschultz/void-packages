@@ -1,18 +1,18 @@
 # Template file for 'strip-nondeterminism'
 pkgname=strip-nondeterminism
-version=1.0.0
+version=1.1.2
 revision=1
-noarch=yes
+archs=noarch
 build_style=perl-module
 hostmakedepends="perl-Archive-Zip"
 makedepends="$hostmakedepends"
 depends="$makedepends"
 short_desc="Non-deterministic information stripper"
-maintainer="Enno Boland <gottox@voidlinux.eu>"
+maintainer="Enno Boland <gottox@voidlinux.org>"
 license="GPL-3.0-or-later"
 homepage="https://reproducible-builds.org/tools/"
 distfiles="http://http.debian.net/debian/pool/main/s/${pkgname}/${pkgname}_${version}.orig.tar.bz2"
-checksum=d51fc5be90e85f385737aa9b6482bbd7d8911f10e9bf5d8ccb0441fa8077d18c
+checksum=750a3b6896703995c9aaa8324f266ac3f46738f457858a40315ed65f28fd5bdf
 
 post_install() {
 	# remove Debhelper add-on

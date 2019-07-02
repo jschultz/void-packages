@@ -1,16 +1,16 @@
 # Template file for 'prison'
 pkgname=prison
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
-hostmakedepends="extra-cmake-modules qt5-tools"
+hostmakedepends="kcoreaddons extra-cmake-modules qt5-tools"
 makedepends="qt5-devel libdmtx-devel qrencode-devel ecm-devel"
 short_desc="Barcode API to produce QRCode barcodes and DataMatrix barcodes"
 maintainer="John <johnz@posteo.net>"
 license="MIT"
 homepage="https://community.kde.org/Frameworks"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/prison-${version}.tar.xz"
-checksum=61b5f10b48d847ce60769d10525a8f4c3c7120d71dd8e2e6285d303ea519b579
+checksum=dc5020918f0b18f4e527df19302d7a58c82a51a5f611cec2bb14e8fe16ac4610
 
 if [ "$CROSS_BUILD" ];then
 	hostmakedepends+=" qt5-qmake qt5-host-tools"

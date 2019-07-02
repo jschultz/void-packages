@@ -2,12 +2,12 @@
 pkgname=autoconf
 version=2.69
 revision=7
-noarch=yes
+archs=noarch
 build_style=gnu-configure
 hostmakedepends="perl m4"
 depends="virtual?awk m4 perl"
 short_desc="Generates automatic source code configuration scripts"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-or-later, GPL-3.0-or-later"
 homepage="http://www.gnu.org/software/autoconf"
 distfiles="${GNU_SITE}/$pkgname/$pkgname-$version.tar.xz"

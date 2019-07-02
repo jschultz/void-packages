@@ -1,17 +1,17 @@
 # Template file for 'kpeople'
 pkgname=kpeople
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules"
+hostmakedepends="kcoreaddons extra-cmake-modules"
 makedepends="kitemviews-devel kservice-devel kwidgetsaddons-devel qt5-plugin-mysql qt5-plugin-odbc qt5-plugin-pgsql qt5-plugin-sqlite qt5-plugin-tds"
 short_desc="Provides access to all contacts and aggregates them by person"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/frameworks/kpeople"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=af5d8a0ad7d57a3a8f65f1aacb8248afbaec16e3b4f51f1342f4ab43729156af
+checksum=8c1f440e3b27a3e6294ba8439a9c15f039af66f18db64d285da247b9d577ee41
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake python"

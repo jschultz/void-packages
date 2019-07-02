@@ -1,14 +1,15 @@
 # Template file for 'telegram-desktop'
 pkgname=telegram-desktop
-version=1.5.4
+version=1.7.10
 revision=1
-_libtgvoip_commit=78e584c443b93ce2794bee75c7448d1b00f1edc9
+_libtgvoip_commit=a19a0aff644127d8089f6a4ac18119ec5247dbd0
 _GSL_commit=d846fe50a3f0bb7767c7e087a05f4be95f4da0ec
 _variant_commit=550ac2f159ca883d360c196149b466955c77a573
-_crl_commit=4291015efab76bda5886a56b5007f4531be17d46
+_crl_commit=d259aebc11df52cb6ff8c738580dc4d8f245d681
 _Catch_commit=5ca44b68721833ae3731802ed99af67c6f38a53a
-create_wrksrc=yes
-build_wrksrc="tdesktop-${version}/Telegram"
+_qtlottie_commit=eeeb4edb2a087c3f8175dafafcad330864d3efc0
+wrksrc="tdesktop-${version}"
+build_wrksrc="Telegram"
 build_style=cmake
 cmake_builddir=build-telegram
 configure_args="-DENABLE_CRASH_REPORTS=OFF -DENABLE_GTK_INTEGRATION=ON
@@ -16,7 +17,8 @@ configure_args="-DENABLE_CRASH_REPORTS=OFF -DENABLE_GTK_INTEGRATION=ON
 hostmakedepends="pkg-config qt5-qmake qt5-host-tools python"
 makedepends="alsa-lib-devel ffmpeg-devel gtk+3-devel libappindicator-devel
  libdbusmenu-glib-devel libopenal-devel minizip-devel opus-devel xxHash-devel
- $(vopt_if pulseaudio 'pulseaudio-devel') qt5-devel range-v3 libva-devel"
+ $(vopt_if pulseaudio 'pulseaudio-devel') qt5-devel range-v3 libva-devel
+ rapidjson"
 depends="qt5-imageformats qt5>=5.11.3<5.11.4"
 short_desc="Telegram Desktop messaging app"
 maintainer="John <johnz@posteo.net>"
@@ -28,16 +30,18 @@ distfiles="https://github.com/telegramdesktop/tdesktop/archive/v${version}.tar.g
  https://github.com/Microsoft/GSL/archive/${_GSL_commit}.tar.gz
  https://github.com/mapbox/variant/archive/${_variant_commit}.tar.gz
  https://github.com/telegramdesktop/crl/archive/${_crl_commit}.tar.gz
- https://github.com/catchorg/Catch2/archive/${_Catch_commit}.tar.gz"
-checksum="747e6f73071ac24edab0704ad87f4dc36e7708d0ae38d01de78732ca943903e6
- 3bef7809958a9ea93bcfee9553d79365a58ffd0cc3ab2096701bc3d3cc0bf901
+ https://github.com/catchorg/Catch2/archive/${_Catch_commit}.tar.gz
+ https://github.com/telegramdesktop/qtlottie/archive/${_qtlottie_commit}.tar.gz"
+checksum="54032b9dd864424eac2a1a95f3f4254666fc99745b90be10195eb10052ed5d67
+ d839ab5a3358e171116b322e0053f441e023c9ced9aec3f0388969c2fce7ac43
  be81db4ab1b57102a0fa1cd0c4a6469294eb9daf24294347592245b754f65ff6
  aa794dfefe0a90501587e36d977b958d0df888503117a8d9aa43dc14f8526d9d
- aee42a2fe003888d0d0133cd208a1524f5d95af6af506c1cd7e07e268d0d9081
- d24e6d9df2b8aa5739d3b9077c6b0ff0ef4d5ef8acc52c3a57e32893854d8d18"
+ f5ea3aeeda0290a44ac49b6300b033d171e67a5b27039fea2f8ae0cb3fc71253
+ d24e6d9df2b8aa5739d3b9077c6b0ff0ef4d5ef8acc52c3a57e32893854d8d18
+ 7084bceb5644a3bb07266d03a645bb66feba19eb840616e3db395036d845c0bb"
 
-build_options="clang custom_api_id pulseaudio"
-build_options_default="pulseaudio custom_api_id"
+build_options="clang pulseaudio"
+build_options_default="pulseaudio"
 
 CXXFLAGS="-DTDESKTOP_API_ID=209235 -DTDESKTOP_API_HASH=169ee702e1df4b6e66d80311db36cc43"
 
@@ -80,18 +84,25 @@ post_extract() {
 		msg_red "${_qt5_version%_*} does not match ${_qt5_dep_ver}\\n"
 		exit 1
 	fi
-
-	cp -rup ${wrksrc}/libtgvoip-${_libtgvoip_commit}/* ${build_wrksrc}/ThirdParty/libtgvoip
-	cp -rup ${wrksrc}/GSL-${_GSL_commit}/* ${build_wrksrc}/ThirdParty/GSL
-	cp -rup ${wrksrc}/variant-${_variant_commit}/* ${build_wrksrc}/ThirdParty/variant
-	cp -rup ${wrksrc}/crl-${_crl_commit}/* ${build_wrksrc}/ThirdParty/crl
-	cp -rup ${wrksrc}/Catch2-${_Catch_commit}/* ${build_wrksrc}/ThirdParty/Catch
+	rmdir ${wrksrc}/${build_wrksrc}/ThirdParty/libtgvoip
+	mv ../libtgvoip-${_libtgvoip_commit} ${wrksrc}/${build_wrksrc}/ThirdParty/libtgvoip
+	rmdir ${wrksrc}/${build_wrksrc}/ThirdParty/GSL
+	mv ../GSL-${_GSL_commit} ${wrksrc}/${build_wrksrc}/ThirdParty/GSL
+	rmdir ${wrksrc}/${build_wrksrc}/ThirdParty/variant
+	mv ../variant-${_variant_commit} ${wrksrc}/${build_wrksrc}/ThirdParty/variant
+	rmdir ${wrksrc}/${build_wrksrc}/ThirdParty/crl
+	mv ../crl-${_crl_commit} ${wrksrc}/${build_wrksrc}/ThirdParty/crl
+	rmdir ${wrksrc}/${build_wrksrc}/ThirdParty/Catch
+	mv ../Catch2-${_Catch_commit} ${wrksrc}/${build_wrksrc}/ThirdParty/Catch
+	rmdir ${wrksrc}/${build_wrksrc}/ThirdParty/qtlottie
+	mv ../qtlottie-${_qtlottie_commit} ${wrksrc}/${build_wrksrc}/ThirdParty/qtlottie
 
 	cp ${FILESDIR}/Telegram.cmake ${build_wrksrc}/CMakeLists.txt
 	cp ${FILESDIR}/ThirdParty-crl.cmake ${build_wrksrc}/ThirdParty/crl/CMakeLists.txt
 	cp ${FILESDIR}/ThirdParty-libtgvoip.cmake ${build_wrksrc}/ThirdParty/libtgvoip/CMakeLists.txt
 	cp ${FILESDIR}/ThirdParty-libtgvoip-webrtc.cmake \
 		${build_wrksrc}/ThirdParty/libtgvoip/webrtc_dsp/CMakeLists.txt
+	cp ${FILESDIR}/ThirdParty-qtlottie.cmake ${build_wrksrc}/ThirdParty/qtlottie/CMakeLists.txt
 
 	mkdir -p ${build_wrksrc}/cmake
 	cp ${FILESDIR}/FindBreakpad.cmake ${build_wrksrc}/cmake
@@ -100,13 +111,6 @@ post_extract() {
 
 	mkdir -p ${build_wrksrc}/native
 	cp ${FILESDIR}/TelegramCodegenTools.cmake ${build_wrksrc}/native/CMakeLists.txt
-	mkdir ${wrksrc}/TelegramPrivate
-	if [ -r "$FILESDIR/custom_api_id.h" ]; then
-		cp "${FILESDIR}/custom_api_id.h" "${wrksrc}/TelegramPrivate"
-	fi
-
-	# change wrksrc temporarily so that patches can be applied
-	wrksrc="${wrksrc}/tdesktop-${version}"
 }
 
 pre_configure() {
@@ -117,6 +121,6 @@ pre_configure() {
 
 post_install() {
 	for i in 16 32 48 64 128 256 512; do
-		vinstall Resources/art/icon$i.png 644 usr/share/icons/hicolor/${i}x${i} telegram.png
+		vinstall Resources/art/icon$i.png 644 usr/share/icons/hicolor/${i}x${i}/apps telegram.png
 	done
 }

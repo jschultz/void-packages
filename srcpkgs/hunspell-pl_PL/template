@@ -1,16 +1,16 @@
 # Template file for 'hunspell-pl_PL'
 pkgname=hunspell-pl_PL
-version=20181129
+version=20190226
 revision=1
+archs=noarch
 create_wrksrc=yes
-noarch=yes
 hostmakedepends="unzip"
 short_desc="Polish dictionary for hunspell"
 maintainer="m-cz <emcze@ya.ru>"
 license="GPL-2.0-only, LGPL-2.1-only, CC-BY-4.0, MPL-1.1, Apache-2.0"
 homepage="https://sjp.pl/slownik/ort/"
 distfiles="https://sjp.pl/slownik/ort/sjp-myspell-pl-${version}.zip"
-checksum=dd37c93769bec8b019e9dbb32bd91177cfd003eaec2f1c8ce76524323262d51d
+checksum=eebe3c7fed18d4ecf85430f66804f0b882e317d01e4c07845479ced64861e5e2
 
 post_extract() {
 	unzip pl_PL.zip

@@ -1,14 +1,17 @@
 # Template file for 'proj'
 pkgname=proj
-version=5.2.0
+version=6.1.0
 revision=1
 build_style=cmake
+configure_args="-DPROJ_TESTS=OFF"
+hostmakedepends="python3"
+makedepends="sqlite-devel"
 short_desc="Cartographic Projections Library"
 maintainer="John <johnz@posteo.net>"
 license="MIT"
 homepage="https://proj4.org"
 distfiles="https://download.osgeo.org/proj/proj-${version}.tar.gz"
-checksum=ef919499ffbc62a4aae2659a55e2b25ff09cccbbe230656ba71c6224056c7e60
+checksum=676165c54319d2f03da4349cbd7344eb430b225fe867a90191d848dc64788008
 
 post_install() {
 	vlicense COPYING

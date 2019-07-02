@@ -2,14 +2,14 @@
 pkgname=perl-Gtk2-Ex-Simple-List
 version=0.50
 revision=2
-noarch=yes
+archs=noarch
 wrksrc="Gtk2-Ex-Simple-List-$version"
 build_style=perl-module
 hostmakedepends="perl"
 makedepends="perl perl-Gtk2"
 depends="perl perl-Gtk2"
 short_desc="Gtk2::Ex::Simple::List - A simple interface to Gtk2's MVC list widget"
-maintainer="Orphaned <orphan@voidlinux.eu>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="LGPL-2.1-or-later"
 homepage="https://metacpan.org/release/Gtk2-Ex-Simple-List"
 distfiles="${CPAN_SITE}/Gtk2/Gtk2-Ex-Simple-List-${version}.tar.gz"

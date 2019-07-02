@@ -1,6 +1,6 @@
 # Template file for 'flacon'
 pkgname=flacon
-version=5.0.0
+version=5.2.0
 revision=1
 build_style=cmake
 hostmakedepends="pkg-config"
@@ -12,7 +12,7 @@ license="LGPL-2.1-or-later"
 homepage="https://flacon.github.io/"
 changelog="https://flacon.github.io/changelog/"
 distfiles="https://github.com/Flacon/flacon/archive/v${version}.tar.gz"
-checksum=183d364fb47afa8b9e55803b77b99c9eba44d7031a28d4062b1a309b2a9f02b2
+checksum=701fb0ebee98a697baa3060645ca4203771714994bb1fa8eeebfd2274e4704ac
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake"

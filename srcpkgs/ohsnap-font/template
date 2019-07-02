@@ -2,12 +2,12 @@
 pkgname=ohsnap-font
 version=1.8.0
 revision=2
-noarch=yes
+archs=noarch
 wrksrc="ohsnap-${version}"
 makedepends="font-util"
 depends="${makedepends}"
 short_desc="Monospaced font based on artwiz snap"
-maintainer='Juan RP <xtraeme@voidlinux.eu>'
+maintainer='Juan RP <xtraeme@voidlinux.org>'
 license="GPL-2.0-only"
 homepage="http://sourceforge.net/projects/osnapfont/"
 distfiles="${SOURCEFORGE_SITE}/osnapfont/ohsnap-${version}.tar.gz"

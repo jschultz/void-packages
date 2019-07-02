@@ -1,17 +1,17 @@
 # Template file for 'kinit'
 pkgname=kinit
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules libcap-progs pkg-config"
+hostmakedepends="kcoreaddons extra-cmake-modules libcap-progs pkg-config"
 makedepends="kio-devel kdoctools-devel libcap-devel"
 short_desc="Helper library to speed up start of applications on KDE workspaces"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-only"
 homepage="https://projects.kde.org/projects/frameworks/kinit"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=5ce5b20ffdbd0bc5bd8ee5c261196319f53bfe93635228870ff601aa8a09ad91
+checksum=aa175a38831ff492fe461c892717c2ed7379b88295c2b6a79a7a81c0e9b2a5af
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake python kdoctools"

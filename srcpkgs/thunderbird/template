@@ -3,22 +3,22 @@
 # THIS PKG MUST BE SYNCHRONIZED WITH "srcpkgs/thunderbird-i18n".
 #
 pkgname=thunderbird
-version=60.4.0
-revision=1
+version=60.7.2
+revision=2
 short_desc="Standalone Mail/News reader"
-maintainer="Enno Boland <gottox@voidlinux.eu>"
+maintainer="Enno Boland <gottox@voidlinux.org>"
 homepage="https://www.thunderbird.net/"
 license="MPL-2.0, GPL-2.0-or-later, LGPL-2.1-or-later"
 distfiles="${MOZILLA_SITE}/${pkgname}/releases/${version}/source/${pkgname}-${version}.source.tar.xz"
-checksum=27a6cdd9cfdd7ce70b1d193c64739db6be6b39eec308f0122d8472a6cd243e75
+checksum=fc89a5f66b17d554fc0b9c153483edcc74b1bacc916dfd6dccead8478060af31
 
-only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+archs="i686* x86_64* ppc64*"
 lib32disabled=yes
 
-hostmakedepends="autoconf213 unzip zip pkg-config perl python3 yasm rust cargo
+hostmakedepends="autoconf213 unzip zip pkg-config perl python yasm rust cargo
  llvm clang"
 makedepends="nss-devel libjpeg-turbo-devel gtk+-devel gtk+3-devel icu-devel
- pixman-devel sqlite-devel libevent-devel libnotify-devel libvpx-devel
+ pixman-devel sqlite-devel libevent-devel libnotify-devel libvpx5-devel
  libXrender-devel libXcomposite-devel libSM-devel libXt-devel
  libXdamage-devel hunspell-devel $(vopt_if alsa alsa-lib-devel)
  $(vopt_if dbus dbus-glib-devel) $(vopt_if pulseaudio pulseaudio-devel)
@@ -27,8 +27,12 @@ makedepends="nss-devel libjpeg-turbo-devel gtk+-devel gtk+3-devel icu-devel
  $(vopt_if sndio sndio-devel)"
 depends="nss>=3.37.3 desktop-file-utils hicolor-icon-theme"
 
-build_options="alsa dbus pulseaudio startup_notification xscreensaver sndio"
-build_options_default="alsa dbus pulseaudio startup_notification xscreensaver sndio"
+build_options="alsa dbus pulseaudio startup_notification xscreensaver sndio wayland"
+build_options_default="alsa dbus pulseaudio startup_notification xscreensaver sndio wayland"
+
+case "$XBPS_TARGET_MACHINE" in
+	i686*) nodebug=yes;;
+esac
 
 post_extract() {
 	case "$XBPS_TARGET_MACHINE" in
@@ -57,6 +61,12 @@ do_build() {
 	esac
 
 	case "$XBPS_TARGET_MACHINE" in
+	x86_64*|i686*|arm*)
+		echo "ac_add_options --disable-elf-hack" >>.mozconfig
+		;;
+	esac
+
+	case "$XBPS_TARGET_MACHINE" in
 	x86_64-musl|i686-musl)
 		echo "ac_add_options --host=${XBPS_TRIPLET}" >>.mozconfig
 		echo "ac_add_options --target=${XBPS_TRIPLET}" >>.mozconfig
@@ -79,6 +89,8 @@ do_build() {
 	i686*)
 		export CFLAGS+=" -D_FILE_OFFSET_BITS=64"
 		export CXXFLAGS+=" -D_FILE_OFFSET_BITS=64"
+		# ENOMEM
+                echo "ac_add_options --disable-debug-symbols" >>.mozconfig
 		;;
 	esac
 
@@ -91,7 +103,8 @@ do_build() {
 	export MOZ_MAKE_FLAGS="${makejobs}"
 
 	cat <<! >>.mozconfig
-ac_add_options --with-google-api-keyfile="${wrksrc}/google-api-key"
+ac_add_options --with-google-location-service-api-keyfile="${wrksrc}/google-api-key"
+ac_add_options --with-google-safebrowsing-api-keyfile="${wrksrc}/google-api-key"
 ac_add_options --with-mozilla-api-keyfile="${wrksrc}/mozilla-api-key"
 ac_add_options $(vopt_enable alsa)
 ac_add_options $(vopt_enable sndio)
@@ -99,6 +112,7 @@ ac_add_options $(vopt_enable dbus)
 ac_add_options $(vopt_enable dbus necko-wifi)
 ac_add_options $(vopt_enable pulseaudio)
 ac_add_options $(vopt_enable startup_notification startup-notification)
+ac_add_options --enable-default-toolkit=$(vopt_if wayland 'cairo-gtk3-wayland' 'cairo-gtk')
 !
 
 	rm -f old-configure

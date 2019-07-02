@@ -1,14 +1,14 @@
 # Template file for 'eclipse'
 pkgname=eclipse
-version=4.9
+version=4.11
 revision=1
 #code name of version
-_release=2018-09
+_release=2019-03
+archs="x86_64"
 wrksrc="eclipse"
-only_for_archs="i686 x86_64"
 depends="virtual?java-environment unzip gtk+3 webkit2gtk libXtst hicolor-icon-theme desktop-file-utils"
 short_desc="IDE for Java and other languages"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="EPL-1.0"
 homepage="https://eclipse.org"
 nopie=yes
@@ -16,13 +16,8 @@ nopie=yes
 _patch=R
 _edition=java
 _mirror="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse"
-if [ "$XBPS_MACHINE" = "x86_64" ]; then
-	distfiles="${_mirror}/technology/epp/downloads/release/${_release}/${_patch}/eclipse-${_edition}-${_release}-linux-gtk-x86_64.tar.gz"
-	checksum=7f5264ab51477deed9f28a4d3f92209846fa9caa3b311f60d540543c7e172748
-else
-	distfiles="${_mirror}/technology/epp/downloads/release/${_release}/${_patch}/eclipse-${_edition}-${_release}-linux-gtk.tar.gz"
-	checksum=c33337a1740a84aabec3bd256f4256c8693ab0d1f755c120614bd28ae354f326
-fi
+distfiles="${_mirror}/technology/epp/downloads/release/${_release}/${_patch}/eclipse-${_edition}-${_release}-${_patch}-linux-gtk-x86_64.tar.gz"
+checksum=c78925ea07849880e41fe66cd96e7a2ec09ed2e7e52c0dc114e77851bbf70d08
 
 do_install() {
 	vmkdir usr/lib/eclipse

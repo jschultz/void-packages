@@ -1,6 +1,6 @@
 # Template file for 'deepin-image-viewer'
 pkgname=deepin-image-viewer
-version=1.3.6
+version=1.3.17
 revision=1
 build_style=qmake
 hostmakedepends="qt5-qmake pkg-config"
@@ -13,7 +13,7 @@ license="GPL-3.0-or-later"
 homepage="https://github.com/linuxdeepin/deepin-image-viewer"
 changelog="https://github.com/linuxdeepin/deepin-image-viewer/blob/${version}/CHANGELOG.md"
 distfiles="https://github.com/linuxdeepin/deepin-image-viewer/archive/${version}.tar.gz"
-checksum=969a664a54d781fb740961e85c910af7bfddf16181baf5b7639eb4db1f3ec0ad
+checksum=e9904e7118fa2e3fe5f1356ecb27570e7d61cdc3a4eafba94d640f630df2dea8
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-svg-devel qt5-x11extras-devel"

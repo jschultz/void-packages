@@ -1,6 +1,6 @@
 # Template file for 'wireguard'
 pkgname=wireguard
-version=0.0.20181218
+version=0.0.20190601
 revision=1
 wrksrc="WireGuard-${version}"
 build_wrksrc="src/tools"
@@ -13,7 +13,7 @@ maintainer="Leah Neukirchen <leah@vuxu.org>"
 license="GPL-2.0-only"
 homepage="https://www.wireguard.com/"
 distfiles="https://git.zx2c4.com/WireGuard/snapshot/WireGuard-${version}.tar.xz"
-checksum=2e9f86acefa49dbfb7fa6f5e10d543f1885a2d5460cd5e102696901107675735
+checksum=7528461824a0174bd7d4f15e68d8f0ce9a8ea318411502b80759438e8ef65568
 
 dkms_modules="wireguard ${version}"
 

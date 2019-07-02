@@ -1,15 +1,15 @@
 # Template file for 'dbeaver'
 pkgname=dbeaver
-version=5.3.0
+version=6.1.0
 revision=1
-only_for_archs="i686 x86_64"
+archs="x86_64"
 hostmakedepends="apache-maven-bin"
 short_desc="Free Universal Database Tool"
 maintainer="Kyle Nusbaum <knusbaum+void@sdf.org>"
 license="Apache-2.0"
 homepage="https://dbeaver.io"
 distfiles="https://github.com/dbeaver/dbeaver/archive/${version}.tar.gz"
-checksum=ef6fd3c1febd6b3b10adfff779c390e2b3889f9a1870aea12c9631c8726b9e15
+checksum=c76e3caaac5824857a628a0e2b0fe66e80affa97657e87b095c30770874c53da
 nopie=true
 
 do_build() {
@@ -17,17 +17,9 @@ do_build() {
 }
 
 do_install() {
-	case $XBPS_TARGET_MACHINE in
-		x86_64*)
-			_target_dir=x86_64
-			;;
-		i686*)
-			_target_dir=x86
-			;;
-	esac
-	vmkdir /usr/share
-	vcopy "product/standalone/target/products/org.jkiss.dbeaver.core.product/linux/gtk/${_target_dir}/dbeaver" /usr/share/
+	vmkdir /usr/lib
+	vcopy "product/standalone/target/products/org.jkiss.dbeaver.core.product/linux/gtk/x86_64/dbeaver" /usr/lib/
 
 	vmkdir /usr/bin
-	ln -s /usr/share/dbeaver/dbeaver ${DESTDIR}/usr/bin/dbeaver
+	ln -s /usr/lib/dbeaver/dbeaver ${DESTDIR}/usr/bin/dbeaver
 }

@@ -1,19 +1,20 @@
 # Template file for 'libkipi5'
 pkgname=libkipi5
-version=18.12.0
+version=19.04.2
 revision=1
+wrksrc="libkipi-${version}"
 build_style=cmake
-wrksrc="${pkgname%5}-${version}"
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules kdoctools qt5-host-tools qt5-qmake"
+hostmakedepends="extra-cmake-modules kdoctools qt5-host-tools qt5-qmake
+ kcoreaddons"
 makedepends="kxmlgui-devel"
-conflicts="libkipi"
-short_desc="An interface to use kipi-plugins from a KDE application"
-maintainer="Denis Revin <denis.revin@gmail.com>"
+short_desc="Interface to use kipi-plugins from a KDE application"
+maintainer="John <johnz@posteo.net>"
 license="GPL-2.0-or-later"
 homepage="https://projects.kde.org/projects/kde/kdegraphics/libs/libkipi"
-distfiles="${KDE_SITE}/applications/${version}/src/${pkgname%5}-${version}.tar.xz"
-checksum=d0a09a245df74947f2c0428a68b06e89dd69a928de81cff1659e5e7d7a02d631
+distfiles="${KDE_SITE}/applications/${version}/src/libkipi-${version}.tar.xz"
+checksum=88563d66dbd81e9031030f07dacece96c550ac6bbfd7eb6e2baae7c010518644
+conflicts="libkipi"
 
 libkipi5-devel_package() {
 	short_desc+=" - development files"

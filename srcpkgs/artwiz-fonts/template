@@ -2,11 +2,11 @@
 pkgname=artwiz-fonts
 version=1.3
 revision=4
-noarch=yes
+archs=noarch
 create_wrksrc=yes
 depends="font-util mkfontdir"
 short_desc="Small futuristic ASCII fonts for X"
-maintainer='Juan RP <xtraeme@voidlinux.eu>'
+maintainer='Juan RP <xtraeme@voidlinux.org>'
 license="GPL-2.0-or-later"
 homepage="http://artwizaleczapka.sourceforge.net/"
 distfiles="${SOURCEFORGE_SITE}/artwizaleczapka/artwiz-aleczapka-en-$version.tar.bz2

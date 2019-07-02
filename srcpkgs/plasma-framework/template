@@ -1,10 +1,10 @@
 # Template file for 'plasma-framework'
 pkgname=plasma-framework
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules pkg-config"
+hostmakedepends="kcoreaddons extra-cmake-modules pkg-config"
 makedepends="kactivities5-devel kdeclarative-devel kdoctools-devel kwayland-devel
  kirigami2-devel"
 depends="qt5-quickcontrols qt5-graphicaleffects qt5-multimedia"
@@ -13,7 +13,7 @@ maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/frameworks/plasma-framework"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=d5d36826af3363a89ff76292dd0f7c8fee91a6595039b1ea6cbb05c309b09e6b
+checksum=150ca5dbe00136af3e5932ecb3d6715f398134541d9b3ae461a2e5f9903da499
 
 if [ "$CROSS_BUILD" ]; then
 	configure_args=" -DDESKTOPTOJSON_EXECUTABLE=/usr/bin/desktoptojson"

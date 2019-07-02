@@ -2,6 +2,7 @@
 # This helper is for templates using cmake.
 #
 do_configure() {
+	export QEMU_LD_PREFIX=${XBPS_CROSS_BASE}
 	local cmake_args=
 	[ ! -d ${cmake_builddir:=build} ] && mkdir -p ${cmake_builddir}
 	cd ${cmake_builddir}
@@ -13,6 +14,9 @@ do_configure() {
 			aarch64*) _CMAKE_SYSTEM_PROCESSOR=aarch64 ;;
 			arm*) _CMAKE_SYSTEM_PROCESSOR=arm ;;
 			mips*) _CMAKE_SYSTEM_PROCESSOR=mips ;;
+			ppc64le*) _CMAKE_SYSTEM_PROCESSOR=ppc64le ;;
+			ppc64*) _CMAKE_SYSTEM_PROCESSOR=ppc64 ;;
+			ppc*) _CMAKE_SYSTEM_PROCESSOR=ppc ;;
 			*) _CMAKE_SYSTEM_PROCESSOR=generic ;;
 		esac
 		if [ -x "${XBPS_CROSS_BASE}/usr/bin/wx-config-gtk3" ]; then
@@ -38,12 +42,18 @@ SET(wxWidgets_CONFIG_EXECUTABLE ${XBPS_WRAPPERDIR}/${wx_config:=wx-config})
 _EOF
 		cmake_args+=" -DCMAKE_TOOLCHAIN_FILE=cross_${XBPS_CROSS_TRIPLET}.cmake"
 	fi
-	cmake_args+=" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release"
+	cmake_args+=" -DCMAKE_INSTALL_PREFIX=/usr"
+	cmake_args+=" -DCMAKE_BUILD_TYPE=Release"
 
 	if [ "$XBPS_TARGET_MACHINE" = "i686" ]; then
 		cmake_args+=" -DCMAKE_INSTALL_LIBDIR=lib32"
 	else
 		cmake_args+=" -DCMAKE_INSTALL_LIBDIR=lib"
+	fi
+
+	if [ "${hostmakedepends}" != "${hostmakedepends/qemu-user-static/}" ]; then
+		echo "SET(CMAKE_CROSSCOMPILING_EMULATOR /usr/bin/qemu-${XBPS_TARGET_QEMU_MACHINE}-static)" \
+			>> cross_${XBPS_CROSS_TRIPLET}.cmake
 	fi
 
 	cmake_args+=" -DCMAKE_INSTALL_SBINDIR=bin"
@@ -56,6 +66,7 @@ _EOF
 }
 
 do_build() {
+	export QEMU_LD_PREFIX=${XBPS_CROSS_BASE}
 	: ${make_cmd:=make}
 
 	cd ${cmake_builddir:=build}
@@ -83,6 +94,7 @@ do_check() {
 }
 
 do_install() {
+	export QEMU_LD_PREFIX=${XBPS_CROSS_BASE}
 	: ${make_cmd:=make}
 	: ${make_install_target:=install}
 

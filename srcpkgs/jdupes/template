@@ -1,16 +1,16 @@
 # Template file for 'jdupes'
 pkgname=jdupes
-version=1.11.1
+version=1.13.1
 revision=1
 build_style=gnu-makefile
 make_build_args="ENABLE_BTRFS=1"
 short_desc="Powerful duplicate file finder and an enhanced fork of fdupes"
-maintainer="Orphaned <orphan@voidlinux.eu>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="MIT"
 homepage="https://github.com/jbruchon/jdupes"
 changelog="https://raw.githubusercontent.com/jbruchon/jdupes/master/CHANGES"
 distfiles="https://github.com/jbruchon/jdupes/archive/v${version}.tar.gz"
-checksum=e71aef9a71ad038092416de48acbe57ac2f46ff13b710991a151caab3de4f7c8
+checksum=6b68ea30b0d8fceb31ccbc07187133dbff0cc84678752e89ad3270c89322710f
 
 post_install() {
 	vlicense LICENSE

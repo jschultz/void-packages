@@ -1,15 +1,15 @@
 # Template file for 'ruby-httparty'
 pkgname=ruby-httparty
-version=0.16.3
+version=0.17.0
 revision=1
-noarch=yes
+archs=noarch
 build_style=gem
 depends="ruby-mime-types>=3.0 ruby-multi_xml>=0.5.2"
 short_desc="Makes http fun! Also, makes consuming restful web services dead easy"
 maintainer="maxice8 <thinkabit.ukim@gmail.com>"
 license="MIT"
 homepage="https://github.com/jnunemaker/httparty"
-checksum=601cfa3ea82dd805a26086c0edc7bd13185d2a3eaf9993dba4eb8e5ffb3db5f6
+checksum=76f359eb0f06873fc64315bb71be33e44100c0865fbf36570811c8a5e9d5151f
 
 post_install() {
 	vlicense MIT-LICENSE

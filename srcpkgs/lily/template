@@ -1,6 +1,6 @@
 # Template file for 'lily'
 pkgname=lily
-version=1.6
+version=1.8
 revision=1
 wrksrc="lily-v${version}"
 build_style=cmake
@@ -9,7 +9,7 @@ maintainer="Diogo Leal <diogo@diogoleal.com>"
 license="MIT"
 homepage="https://gitlab.com/FascinatedBox/lily"
 distfiles="https://gitlab.com/FascinatedBox/lily/-/archive/v${version}/lily-v${version}.tar.bz2"
-checksum=45a4d61dd040bc167737961b6ca50b2d549143e621fe4e95365041f2dedcd62c
+checksum=cbd8d6bfeab37415fefdcd5a4b292792a2d48c74792314544e8501925c9959f9
 
 post_install() {
 	vlicense license.txt

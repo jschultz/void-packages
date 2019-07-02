@@ -1,14 +1,15 @@
 # Template file for 'umbrello'
 pkgname=umbrello
-version=18.12.0
+version=19.04.2
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules kconfig kdoctools python qt5-host-tools qt5-qmake"
-makedepends="kdelibs4support-devel ktexteditor-devel"
+hostmakedepends="extra-cmake-modules kcoreaddons kconfig kdoctools python qt5-host-tools qt5-qmake"
+makedepends="kdelibs4support-devel ktexteditor-devel qt5-webkit-devel"
 short_desc="UML modelling tool and code generator"
 maintainer="Piotr Wójcik <chocimier@tlen.pl>"
 license="GPL-2.0-or-later, LGPL-2.0-or-later, GFDL-1.2-or-later"
 homepage="https://umbrello.kde.org/"
-distfiles="${KDE_SITE}/applications/${version}/src/${pkgname}-${version}.tar.xz"
-checksum=6ed4c5021fe96d89000dfe56a1401a939da00d42845541c9ed8eb730c1e62597
+distfiles="${KDE_SITE}/applications/${version}/src/umbrello-${version}.tar.xz"
+checksum=de4b4884753548c6c46f827738cb47b05b0f051c7accff5b8be4f8b8981be9b9
+

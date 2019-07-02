@@ -1,9 +1,9 @@
 # Template file for 'dtkcore'
 pkgname=dtkcore
-version=2.0.9.14
+version=2.0.14
 revision=1
 build_style=qmake
-configure_args="LIB_INSTALL_DIR=/usr/lib/"
+configure_args="LIB_INSTALL_DIR=/usr/lib/ VERSION=${version}"
 hostmakedepends="qt5-qmake pkg-config"
 makedepends="qt5-devel gsettings-qt-devel"
 short_desc="Base devlopment tool of all C++/Qt work on Deepin"
@@ -12,7 +12,7 @@ license="GPL-3.0-or-later"
 homepage="https://github.com/linuxdeepin/dtkcore"
 changelog="https://github.com/linuxdeepin/dtkcore/blob/${version}/CHANGELOG.md"
 distfiles="https://github.com/linuxdeepin/dtkcore/archive/${version}.tar.gz"
-checksum=85bf79513e785509e9680913717127de2976dd8a09ff2ea5bd29ee8511a736db
+checksum=d012e009775c261ebe085046d2272a57346ac7f9cde0114bc608ca5cfd39c0eb
 
 if [ "$CROSS_BUILD" ];then
 	hostmakedepends+=" qt5-devel gsettings-qt-devel"

@@ -1,9 +1,9 @@
 # Template file for 'kirigami2'
 pkgname=kirigami2
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
-hostmakedepends="extra-cmake-modules qt5-qmake qt5-host-tools"
+hostmakedepends="kcoreaddons extra-cmake-modules qt5-qmake qt5-host-tools"
 makedepends="qt5-devel qt5-declarative-devel qt5-svg-devel qt5-quickcontrols2-devel
  qt5-tools-devel"
 depends="qt5-graphicaleffects"
@@ -12,7 +12,7 @@ maintainer="Sir_Boops <admin@boops.me>"
 license="LGPL-2.0-or-later"
 homepage="https://techbase.kde.org/Kirigami"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/kirigami2-${version}.tar.xz"
-checksum=31fe9116af88bb2e4016087b29b01c9ab1bc651b1ec4cf7cbb6e70fea93e792b
+checksum=ff6f1647671b10bfe6abda3e230e480b8d14b612ef614f1cd21d962e78e7a44f
 
 kirigami2-devel_package() {
 	short_desc+=" - development"

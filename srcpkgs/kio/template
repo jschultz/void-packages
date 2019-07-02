@@ -1,18 +1,19 @@
 # Template file for 'kio'
 pkgname=kio
-version=5.53.0
-revision=1
+version=5.59.0
+revision=2
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules kauth"
-makedepends="kdoctools-devel ksolid-devel kbookmarks-devel kjobwidgets-devel kwallet-devel acl-devel mit-krb5-devel libxslt-devel libxml2-devel"
+hostmakedepends="kcoreaddons extra-cmake-modules kauth"
+makedepends="kdoctools-devel ksolid-devel kbookmarks-devel kjobwidgets-devel
+ kwallet-devel acl-devel mit-krb5-devel libxslt-devel libxml2-devel"
 depends="desktop-file-utils"
 short_desc="KDE Network transparent access to files and data"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-or-later"
 homepage="https://projects.kde.org/projects/frameworks/kio"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=7320df009b19ab9ad3acfeb0d8cf9e0824d5779930fb85f59208deb0cb4124c3
+checksum=1960a44900d804727a235388c32ce95c903d439699469945d87602cd224709b9
 
 CXXFLAGS+=" -fpermissive"
 

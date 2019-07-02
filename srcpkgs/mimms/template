@@ -2,13 +2,13 @@
 pkgname=mimms
 version=3.2.1
 revision=3
-noarch=yes
+archs=noarch
 build_style=python2-module
 pycompile_module="libmimms"
 hostmakedepends="python-setuptools"
 depends="libmms python"
 short_desc="MMS (e.g. mmsh://) stream downloader"
-maintainer="beefcurtains <beefcurtains@voidlinux.eu>"
+maintainer="beefcurtains <beefcurtains@voidlinux.org>"
 license="GPL-3.0-or-later"
 homepage="http://www.nongnu.org/mimms/"
 distfiles="${NONGNU_SITE}/${pkgname}/${pkgname}-${version}.tar.bz2"

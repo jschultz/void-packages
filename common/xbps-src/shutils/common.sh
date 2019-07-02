@@ -5,7 +5,7 @@ run_func() {
 
     : ${funcname:=$func}
 
-    logpipe=$(mktemp -u --tmpdir=${XBPS_STATEDIR} ${pkgname}_${XBPS_CROSS_BUILD}_XXXXXXXX.logpipe)
+    logpipe=$(mktemp -u -p ${XBPS_STATEDIR} ${pkgname}_${XBPS_CROSS_BUILD}_XXXXXXXX.logpipe) || exit 1
     logfile=${XBPS_STATEDIR}/${pkgname}_${XBPS_CROSS_BUILD}_${funcname}.log
 
     msg_normal "${pkgver:-xbps-src}: running ${desc:-${func}} ...\n"
@@ -66,6 +66,9 @@ run_step() {
   elif [ ! "$optional_step" ]; then
     msg_error "$pkgver: cannot find do_$step_name()!\n"
   fi
+
+  # Run do_ phase hooks
+  run_pkg_hooks "do-$step_name"
 
   # Run post_* Phase
   if declare -f "post_$step_name" >/dev/null; then
@@ -151,7 +154,7 @@ msg_normal_append() {
 }
 
 set_build_options() {
-    local f j opt optval _optsset pkgopts _pkgname
+    local f j pkgopts _pkgname
     local -A options
 
     if [ -z "$build_options" ]; then
@@ -167,30 +170,21 @@ set_build_options() {
         fi
         OIFS="$IFS"; IFS=','
         for j in ${pkgopts}; do
-            opt=${j#\~}
-            opt_disabled=${j:0:1}
-            if [ "$opt" = "$f" ]; then
-                if [ "$opt_disabled" != "~" ]; then
-                    eval options[$opt]=1
-                else
-                    eval options[$opt]=0
-                fi
-            fi
+            case "$j" in
+            "$f") options[$j]=1 ;;
+            "~$f") options[${j#\~}]=0 ;;
+            esac
         done
         IFS="$OIFS"
     done
 
     for f in ${build_options_default}; do
-        optval=${options[$f]}
-        if [[ -z "$optval" ]] || [[ $optval -eq 1 ]]; then
-            options[$f]=1
-        fi
+        [[ -z "${options[$f]}" ]] && options[$f]=1
     done
 
     # Prepare final options.
     for f in ${!options[@]}; do
-        optval=${options[$f]}
-        if [[ $optval -eq 1 ]]; then
+        if [[ ${options[$f]} -eq 1 ]]; then
             eval export build_option_${f}=1
         else
             eval unset build_option_${f}
@@ -207,25 +201,13 @@ set_build_options() {
         return 0
     fi
 
-    for f in ${build_options}; do
-        eval optval=${options[$f]}
-        if [[ $optval -eq 1 ]]; then
-            _optsset+=" ${f}"
-        else
-            _optsset+=" ~${f}"
-        fi
-    done
-
-    for f in ${_optsset}; do
-        if [ -z "$PKG_BUILD_OPTIONS" ]; then
-            PKG_BUILD_OPTIONS="$f"
-        else
-            PKG_BUILD_OPTIONS+=" $f"
-        fi
-    done
-
     # Sort pkg build options alphabetically.
-    export PKG_BUILD_OPTIONS="$(echo "$PKG_BUILD_OPTIONS"|tr ' ' '\n'|sort|tr '\n' ' ')"
+    export PKG_BUILD_OPTIONS=$(
+        for f in ${build_options}; do
+            [[ "${options[$f]}" -eq 1 ]] || printf '~'
+            printf '%s\n' "$f"
+        done | sort
+    )
 }
 
 source_file() {
@@ -255,21 +237,24 @@ run_pkg_hooks() {
 unset_package_funcs() {
     local f
 
-    for f in $(typeset -F|grep -E '_package$'); do
-        eval unset -f $f
+    for f in "$(typeset -F)"; do
+        case "$f" in
+        *_package)
+            unset -f "$f"
+            ;;
+        esac
     done
 }
 
 get_subpkgs() {
-    local args list
+    local f
 
-    args="$(typeset -F|grep -E '_package$')"
-    set -- ${args}
-    while [ $# -gt 0 ]; do
-        list+=" ${3%_package}"; shift 3
-    done
-    for f in ${list}; do
-        echo "$f"
+    for f in $(typeset -F); do
+        case "$f" in
+        *_package)
+            echo "${f%_package}"
+            ;;
+        esac
     done
 }
 
@@ -281,7 +266,7 @@ setup_pkg() {
     basepkg=${pkg%-32bit}
 
     # Start with a sane environment
-    unset -v PKG_BUILD_OPTIONS XBPS_CROSS_CFLAGS XBPS_CROSS_CXXFLAGS XBPS_CROSS_FFLAGS XBPS_CROSS_CPPFLAGS XBPS_CROSS_LDFLAGS
+    unset -v PKG_BUILD_OPTIONS XBPS_CROSS_CFLAGS XBPS_CROSS_CXXFLAGS XBPS_CROSS_FFLAGS XBPS_CROSS_CPPFLAGS XBPS_CROSS_LDFLAGS XBPS_TARGET_QEMU_MACHINE
     unset -v subpackages run_depends build_depends host_build_depends
 
     unset_package_funcs
@@ -291,7 +276,7 @@ setup_pkg() {
     if [ -n "$cross" ]; then
         source_file $XBPS_CROSSPFDIR/${cross}.sh
 
-        _vars="TARGET_MACHINE CROSS_TRIPLET CROSS_CFLAGS CROSS_CXXFLAGS"
+        _vars="TARGET_MACHINE CROSS_TRIPLET CROSS_CFLAGS CROSS_CXXFLAGS TARGET_QEMU_MACHINE"
         for f in ${_vars}; do
             eval val="\$XBPS_$f"
             if [ -z "$val" ]; then
@@ -301,6 +286,7 @@ setup_pkg() {
         done
 
         export XBPS_CROSS_BASE=/usr/$XBPS_CROSS_TRIPLET
+        export XBPS_TARGET_QEMU_MACHINE="$XBPS_TARGET_QEMU_MACHINE"
 
         XBPS_INSTALL_XCMD="env XBPS_TARGET_ARCH=$XBPS_TARGET_MACHINE $XBPS_INSTALL_CMD -c /host/repocache -r $XBPS_CROSS_BASE"
         XBPS_QUERY_XCMD="env XBPS_TARGET_ARCH=$XBPS_TARGET_MACHINE $XBPS_QUERY_CMD -c /host/repocache -r $XBPS_CROSS_BASE"
@@ -313,6 +299,7 @@ setup_pkg() {
         export XBPS_TARGET_MACHINE=${XBPS_ARCH:-$XBPS_MACHINE}
         unset XBPS_CROSS_BASE XBPS_CROSS_LDFLAGS XBPS_CROSS_FFLAGS
         unset XBPS_CROSS_CFLAGS XBPS_CROSS_CXXFLAGS XBPS_CROSS_CPPFLAGS
+        unset XBPS_CROSS_RUSTFLAGS XBPS_CROSS_RUST_TARGET
 
         XBPS_INSTALL_XCMD="$XBPS_INSTALL_CMD"
         XBPS_QUERY_XCMD="$XBPS_QUERY_CMD"
@@ -325,9 +312,6 @@ setup_pkg() {
 
     export XBPS_INSTALL_XCMD XBPS_QUERY_XCMD XBPS_RECONFIGURE_XCMD \
         XBPS_REMOVE_XCMD XBPS_RINDEX_XCMD XBPS_UHELPER_XCMD
-
-    export XBPS_GCC_VERSION_MAJOR XBPS_GCC_VERSION_MINOR XBPS_GCC_VERSION_BUILD \
-        XBPS_GCC_VERSION
 
     # Source all sourcepkg environment setup snippets.
     # Source all subpkg environment setup snippets.
@@ -349,6 +333,7 @@ setup_pkg() {
         source_file ${XBPS_SRCPKGDIR}/${basepkg}/template
     fi
 
+
     # Check if required vars weren't set.
     _vars="pkgname version short_desc revision homepage license"
     for f in ${_vars}; do
@@ -369,12 +354,9 @@ setup_pkg() {
     esac
 
     # Check if base-chroot is already installed.
-    if [ -z "$bootstrap" -a "z$show_problems" != "zignore-problems" ]; then
-        check_installed_pkg base-chroot-0.1_1
-        if [ $? -ne 0 ]; then
-            msg_red "${pkg} is not a bootstrap package and cannot be built without it.\n"
-            msg_error "Please install bootstrap packages and try again.\n"
-        fi
+    if [ -z "$bootstrap" -a -z "$CHROOT_READY" -a "z$show_problems" != "zignore-problems" ]; then
+        msg_red "${pkg} is not a bootstrap package and cannot be built without it.\n"
+        msg_error "Please install bootstrap packages and try again.\n"
     fi
 
     sourcepkg="${pkgname}"
@@ -413,7 +395,8 @@ setup_pkg() {
     fi
     makejobs="-j$XBPS_MAKEJOBS"
 
-    if [ -n "$noarch" ]; then
+    # strip whitespaces to make "  noarch  " valid too.
+    if [ "${archs// /}" = "noarch" ]; then
         arch="noarch"
     else
         arch="$XBPS_TARGET_MACHINE"
@@ -432,23 +415,27 @@ setup_pkg() {
         dbgflags="-g"
     fi
 
-    if [ -z "$cross" ]; then
-        if [ -z "$CHROOT_READY" ]; then
-            source_file ${XBPS_COMMONDIR}/build-profiles/bootstrap.sh
-        else
-            source_file ${XBPS_COMMONDIR}/build-profiles/${XBPS_MACHINE}.sh
-        fi
+    # build profile is used always in order to expose the host triplet,
+    # but the compiler flags from it are only used when not crossing
+    if [ -z "$CHROOT_READY" ]; then
+        source_file ${XBPS_COMMONDIR}/build-profiles/bootstrap.sh
+    else
+        source_file ${XBPS_COMMONDIR}/build-profiles/${XBPS_MACHINE}.sh
     fi
 
     set_build_options
 
-    export CFLAGS="$XBPS_TARGET_CFLAGS $XBPS_CFLAGS $XBPS_CROSS_CFLAGS $CFLAGS $dbgflags"
-    export CXXFLAGS="$XBPS_TARGET_CXXFLAGS $XBPS_CXXFLAGS $XBPS_CROSS_CXXFLAGS $CXXFLAGS $dbgflags"
-    export FFLAGS="$XBPS_TARGET_FFLAGS $XBPS_FFLAGS $XBPS_CROSS_FFLAGS $FFLAGS"
-    export CPPFLAGS="$XBPS_TARGET_CPPFLAGS $XBPS_CPPFLAGS $XBPS_CROSS_CPPFLAGS $CPPFLAGS"
-    export LDFLAGS="$XBPS_TARGET_LDFLAGS $XBPS_LDFLAGS $XBPS_CROSS_LDFLAGS $LDFLAGS"
+    export CFLAGS="$XBPS_CFLAGS $XBPS_CROSS_CFLAGS $CFLAGS $dbgflags"
+    export CXXFLAGS="$XBPS_CXXFLAGS $XBPS_CROSS_CXXFLAGS $CXXFLAGS $dbgflags"
+    export FFLAGS="$XBPS_FFLAGS $XBPS_CROSS_FFLAGS $FFLAGS"
+    export CPPFLAGS="$XBPS_CPPFLAGS $XBPS_CROSS_CPPFLAGS $CPPFLAGS"
+    export LDFLAGS="$XBPS_LDFLAGS $XBPS_CROSS_LDFLAGS $LDFLAGS"
 
     export BUILD_CC="cc"
+    export BUILD_CXX="c++"
+    export BUILD_CPP="cpp"
+    export BUILD_FC="gfortran"
+    export BUILD_LD="ld"
     export BUILD_CFLAGS="$XBPS_CFLAGS"
     export BUILD_CXXFLAGS="$XBPS_CXXFLAGS"
     export BUILD_CPPFLAGS="$XBPS_CPPFLAGS"
@@ -526,7 +513,16 @@ setup_pkg() {
         export RUSTFLAGS="$XBPS_CROSS_RUSTFLAGS"
         # Rust target, which differs from our triplets
         export RUST_TARGET="$XBPS_CROSS_RUST_TARGET"
+        # Rust build, which is the host system, may also differ
+        export RUST_BUILD="$XBPS_RUST_TARGET"
     else
+        # Target flags from build-profile
+        export CFLAGS="$XBPS_TARGET_CFLAGS $CFLAGS"
+        export CXXFLAGS="$XBPS_TARGET_CXXFLAGS $CXXFLAGS"
+        export FFLAGS="$XBPS_TARGET_FFLAGS $FFLAGS"
+        export CPPFLAGS="$XBPS_TARGET_CPPFLAGS $CPPFLAGS"
+        export LDFLAGS="$XBPS_TARGET_LDFLAGS $LDFLAGS"
+        # Tools
         export CC="cc"
         export CXX="g++"
         export CPP="cpp"
@@ -542,13 +538,15 @@ setup_pkg() {
         export NM="nm"
         export READELF="readelf"
         export RUST_TARGET="$XBPS_RUST_TARGET"
-        # Unse cross evironment variables
+        export RUST_BUILD="$XBPS_RUST_TARGET"
+        # Unset cross evironment variables
         unset CC_target CXX_target CPP_target GCC_target FC_target LD_target AR_target AS_target
         unset RANLIB_target STRIP_target OBJDUMP_target OBJCOPY_target NM_target READELF_target
         unset CFLAGS_target CXXFLAGS_target CPPFLAGS_target LDFLAGS_target
         unset CC_host CXX_host CPP_host GCC_host FC_host LD_host AR_host AS_host
         unset RANLIB_host STRIP_host OBJDUMP_host OBJCOPY_host NM_host READELF_host
         unset CFLAGS_host CXXFLAGS_host CPPFLAGS_host LDFLAGS_host
+        unset RUSTFLAGS
     fi
 
     # Setup some specific package vars.
@@ -582,4 +580,12 @@ setup_pkg() {
     fi
 
     source_file $XBPS_COMMONDIR/environment/build-style/${build_style}.sh
+
+    # Source all build-helper files that are defined
+    for f in $build_helper; do
+        if [ ! -r $XBPS_BUILDHELPERDIR/${f}.sh ];  then
+            msg_error "$pkgver: cannot find build helper $XBPS_BUILDHELPERDIR/${f}.sh!\n"
+        fi
+        . $XBPS_BUILDHELPERDIR/${f}.sh
+    done
 }

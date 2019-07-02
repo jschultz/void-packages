@@ -1,17 +1,17 @@
 # Template file for 'attica'
 pkgname=attica
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules qt5-host-tools qt5-devel"
+hostmakedepends="kcoreaddons extra-cmake-modules qt5-host-tools qt5-devel"
 makedepends="qt5-devel"
 short_desc="A Qt library that implements the Open Collaboration Services API"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/kdesupport/attica"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=8ff698aae6288d5bc4ef2d8762c420840d111c948c03b10f2968ff504ae9c262
+checksum=abd44f757c31452a2fe6c8029506a87ca3605849df4f86dee26b6f885ae812b3
 
 attica-devel_package() {
 	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"

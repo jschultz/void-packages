@@ -1,24 +1,21 @@
 # Template file for 'buildah'
 pkgname=buildah
-version=1.5
-revision=2
+version=1.9.0
+revision=1
 build_style=go
-go_import_path="github.com/containers/buildah"
+go_import_path=github.com/containers/buildah
 go_package="${go_import_path}/cmd/buildah"
+go_build_tags=containers_image_ostree_stub
 hostmakedepends="pkg-config go-md2man"
 makedepends="libostree-devel libbtrfs-devel device-mapper-devel gpgme-devel
  libassuan-devel libseccomp-devel"
-depends="runc skopeo"
-short_desc="A tool that facilitates building OCI images"
-maintainer="Cameron Nemo <camerontnorman@gmail.com>"
+depends="runc skopeo containers.image"
+short_desc="Dockerfile compatible OCI image building tool"
+maintainer="Cameron Nemo <cnemo@tutanota.com>"
 license="Apache-2.0"
 homepage="https://github.com/containers/buildah"
 distfiles="${homepage}/archive/v${version}.tar.gz"
-checksum=7da4226c0e1d4d6a925bb0d1ee565530c560e955a479ba26f8d4fe87c8004f51
-
-case "$XBPS_TARGET_ARCH" in
-	*-musl) broken="/lib/libmount.so.1: undefined reference to getrandom" ;;
-esac
+checksum=0cba1e25bb3361f1dca160784b12fe45ab77e5b5252617f98e861b337a964dde
 
 post_build() {
 	make -C docs
@@ -26,7 +23,6 @@ post_build() {
 
 post_install() {
 	vinstall contrib/completions/bash/buildah 644 /usr/share/bash-completion/completions
-	vinstall tests/registries.conf 644 /etc/containers
 	for _i in docs/*.1; do
 		vman $_i
 	done

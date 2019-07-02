@@ -1,14 +1,14 @@
 # Template file for 'toybox'
 pkgname=toybox
-version=0.7.8
+version=0.8.1
 revision=1
 create_wrksrc=yes
 short_desc="BSD-licensed alternative to busybox"
 maintainer="Steve Prybylski <sa.prybylx@gmail.com>"
 license="0BSD"
 homepage="http://www.landley.net/toybox"
-distfiles="${homepage}/downloads/${pkgname}-${version}.tar.gz"
-checksum=4962e16898cb3c6e2719205349c8e6749a30583618a264aa8911f9ad61d998d6
+distfiles="http://www.landley.net/toybox/downloads/toybox-${version}.tar.gz"
+checksum=1ac41e62b809d2ab656479f7f4e20bb71c63c14473f5c7d13f25d4f7fcfefdb3
 
 post_extract() {
 	mv toybox-${version} toybox
@@ -27,6 +27,14 @@ do_build() {
 	cd ../toybox-static
 	make defconfig
 	make ${makejobs} LDFLAGS="-static" toybox
+}
+
+do_check() {
+	cd toybox
+	make tests
+
+	cd ../toybox-static
+	make tests
 }
 
 do_install() {

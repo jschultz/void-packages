@@ -56,18 +56,18 @@ hook() {
 
     mapshlibs=$XBPS_COMMONDIR/shlibs
 
-    if [ -n "$noarch" -o -n "$noverifyrdeps" ]; then
+    if [ "${archs// /}" = "noarch" -o -n "$noverifyrdeps" ]; then
         store_pkgdestdir_rundeps
         return 0
     fi
 
-    depsftmp=$(mktemp -t xbps_src_depstmp.XXXXXXXXXX) || return 1
+    depsftmp=$(mktemp) || exit 1
     find ${PKGDESTDIR} -type f -perm -u+w > $depsftmp 2>/dev/null
 
     exec 3<&0 # save stdin
     exec < $depsftmp
     while read f; do
-        lf=${f#${DESTDIR}}
+        lf=${f#${PKGDESTDIR}}
 	if [ "${skiprdeps/${lf}/}" != "${skiprdeps}" ]; then
 		msg_normal "Skipping dependency scan for ${lf}\n"
 		continue

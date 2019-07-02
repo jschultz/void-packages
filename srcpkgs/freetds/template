@@ -1,6 +1,6 @@
 # Template file for 'freetds'
 pkgname=freetds
-version=1.00.109
+version=1.1.6
 revision=1
 build_style=gnu-configure
 configure_args="--sysconfdir=/etc/freetds"
@@ -11,7 +11,8 @@ maintainer="Diogo Leal <diogo@diogoleal.com>"
 license="LGPL-2.0-or-later"
 homepage="http://www.freetds.org/"
 distfiles="http://www.freetds.org/files/stable/freetds-${version}.tar.gz"
-checksum=314cc6c22086dc2cc677aed5e0dec07845cf13f79273af7bb855eb447b45f906
+checksum=f3ce8e48bc8fd08777a35c7fc0a26b6c8e7e53748c8c0afec49231df93afcdee
+
 conf_files="/etc/freetds/freetds.conf
  /etc/freetds/locales.conf
  /etc/freetds/pool.conf"
@@ -20,15 +21,15 @@ freetds-devel_package() {
 	short_desc+=" - development files"
 	depends="${sourcepkg}>=${version}_${revision}"
 	pkg_install() {
-		vmove usr/lib/*.a
-		vmove usr/lib/*.so
+		vmove "usr/lib/*.a"
+		vmove "usr/lib/*.so"
 		vmove usr/include
 	}
 }
 
 freetds-doc_package() {
 	short_desc+=" - documentation"
-	noarch=yes
+	archs=noarch
 	pkg_install() {
 		vmove usr/share/doc
 	}

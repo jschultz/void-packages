@@ -1,8 +1,8 @@
 # Template file for 'gallery-dl'
 pkgname=gallery-dl
-version=1.6.2
+version=1.8.6
 revision=1
-noarch=yes
+archs=noarch
 wrksrc="gallery_dl-${version}"
 build_style=python3-module
 pycompile_module="gallery_dl"
@@ -14,4 +14,4 @@ license="GPL-2.0-or-later"
 homepage="https://github.com/mikf/gallery-dl"
 changelog="https://raw.githubusercontent.com/mikf/gallery-dl/master/CHANGELOG.md"
 distfiles="${homepage}/releases/download/v${version}/gallery_dl-${version}.tar.gz"
-checksum=222b287947b46695e10dd4dccd316a6b283a7a0a2fbc9e936cfdb9e8d8b75a96
+checksum=5dd850d50806a9a1cfc93a1b340ac449a1c64f94b97f4e1eae4609c4cc3ec446

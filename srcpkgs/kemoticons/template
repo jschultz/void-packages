@@ -1,17 +1,17 @@
 # Template file for 'kemoticons'
 pkgname=kemoticons
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules"
+hostmakedepends="kcoreaddons extra-cmake-modules"
 makedepends="kservice-devel karchive-devel"
 short_desc="KDE Convert text emoticons to graphical emoticons"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later, CC-BY-4.0"
 homepage="https://projects.kde.org/projects/frameworks/kemoticons"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=1c6cff3a28ea68357db2edd483f25b7a98bf0a1b480c8dcd90ac727d0bcb3275
+checksum=ca6d5beb925715f465248b1c3930fe5418e5c24adde91415bd0676e28ae2e0bf
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake"

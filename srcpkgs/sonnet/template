@@ -1,17 +1,17 @@
 # Template file for 'sonnet'
 pkgname=sonnet
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules"
+hostmakedepends="kcoreaddons extra-cmake-modules"
 makedepends="qt5-devel qt5-tools-devel aspell-devel hunspell-devel"
 short_desc="KDE Multi-language spell checker"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/frameworks/sonnet"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=286c4c377ab38f3c14ff807f7a471f803c691b1fb624cecee8e7c9df349b684a
+checksum=f30e4d622bed2979bdd140adc6fdd537c3bd7f632f49d9efec7d9789cdcff025
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-tools-devel sonnet"

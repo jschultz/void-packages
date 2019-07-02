@@ -1,17 +1,17 @@
 # Template file for 'kdesu'
 pkgname=kdesu
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules"
+hostmakedepends="kcoreaddons extra-cmake-modules"
 makedepends="kservice-devel kpty-devel"
 short_desc="KDE User interface for running shell commands with root privileges"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-only"
 homepage="https://projects.kde.org/projects/frameworks/kdesu"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=be0bc2d77e38cc9c13e24daa66543c06a735343207542ab3f294be927c0a6da2
+checksum=7cf1c31475deb85c1045b48303d424ada6e808d1cb9787b522089793185b6c77
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake python"

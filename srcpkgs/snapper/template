@@ -1,7 +1,7 @@
 # Template file for 'snapper'
 pkgname=snapper
-version=0.8.1
-revision=2
+version=0.8.3
+revision=1
 build_style=gnu-configure
 configure_args="--disable-zypp --with-conf=/etc/conf.d"
 conf_files="/etc/conf.d/snapper"
@@ -10,11 +10,11 @@ hostmakedepends="automake docbook-xsl libtool libxml2-devel libxslt pkg-config"
 makedepends="acl-devel boost-devel dbus-devel e2fsprogs-devel libbtrfs-devel
  libmount-devel libxml2-devel pam-devel"
 short_desc="Tool for Linux filesystem snapshot management"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-only"
 homepage="http://snapper.io"
 distfiles="https://github.com/openSUSE/snapper/archive/v${version}.tar.gz"
-checksum=3f3b8b56bd15ddbee938ec3907f50619299617f10255a45e012037ab05f44094
+checksum=cf3bdfb5460596a53ece9e9f998f7f2a8759df8e032bc8048331a4267c43ae96
 lib32disabled=yes
 
 case "$XBPS_TARGET_MACHINE" in

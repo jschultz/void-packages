@@ -1,7 +1,7 @@
 # Template file for 'aminal'
 pkgname=aminal
-version=0.7.12
-revision=2
+version=0.8.7
+revision=1
 build_style=go
 go_import_path=github.com/liamg/aminal
 makedepends="MesaLib-devel libX11-devel libXcursor-devel libXrandr-devel
@@ -11,4 +11,4 @@ maintainer="SolitudeSF <solitudesf@protonmail.com>"
 license="GPL-3.0-or-later"
 homepage="https://github.com/liamg/aminal"
 distfiles="${homepage}/archive/v${version}.tar.gz"
-checksum=bd424230d2ee2f23c80703208ab22a6ed09d45862557094ef540a219adf25544
+checksum=ed59927531e7d585a42366c455e491a846c7e23ae079fa1d10d43fdd3a92eb65

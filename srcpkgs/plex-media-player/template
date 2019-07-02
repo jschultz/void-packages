@@ -1,11 +1,13 @@
 # Template file for 'plex-media-player'
 pkgname=plex-media-player
-version=2.24.0.924
+version=2.30.1.966
 revision=1
-_commit_rev=63fcaa8e
-_buildid_version=87-ac3c1b07015f76
-_clientdesktop_version=3.77.2-7015f76
-_clienttv_version=3.80.1-ac3c1b0
+_commit_rev=e4e7b964
+# See CMakeModules/WebClient.cmake
+_buildid_version=113-862bda5ecd072f
+# See https://artifacts.plex.tv/web-client-pmp/${_buildid_version}/buildid.cmake
+_clientdesktop_version=3.83.2-ecd072f
+_clienttv_version=3.94.0-862bda5
 wrksrc="plex-media-player-${version}-${_commit_rev}"
 build_style=cmake
 configure_args="-DQTROOT="${XBPS_CROSS_BASE}/usr" -DFULL_GIT_REVISION=${_commit_rev}"
@@ -15,7 +17,7 @@ makedepends="libcec-devel libX11-devel libXext-devel libXrandr-devel
  qt5-webchannel-devel qt5-webengine-devel qt5-x11extras-devel SDL2-devel zlib-devel"
 depends="qt5-quickcontrols"
 short_desc="Next generation Plex Desktop/Embedded Client"
-maintainer="Rasmus Thomsen <rasmus.thomsen@protonmail.com>"
+maintainer="Rasmus Thomsen <oss@cogitri.dev>"
 license="LGPL-2.1-or-later"
 homepage="https://github.com/plexinc/plex-media-player"
 distfiles="https://github.com/plexinc/plex-media-player/archive/v${version}-${_commit_rev}.tar.gz
@@ -24,12 +26,12 @@ distfiles="https://github.com/plexinc/plex-media-player/archive/v${version}-${_c
  https://artifacts.plex.tv/web-client-pmp/${_buildid_version}/web-client-desktop-${_clientdesktop_version}.tar.xz.sha1
  https://artifacts.plex.tv/web-client-pmp/${_buildid_version}/web-client-tv-${_clienttv_version}.tar.xz
  https://artifacts.plex.tv/web-client-pmp/${_buildid_version}/web-client-tv-${_clienttv_version}.tar.xz.sha1"
-checksum="a6ccd8b0a84f65ac887007ef39ebc5b07960e5d3d29c91d8981cb3d58d6f7e34
- 9f73300b00f058fa4a751dbc147ec277ce750b14fecff48efb549d6e147825bc
- 322fb8078a61b67e0d600f5c35d3a6bd9656b9c0adec58290d309cd69c5a6256
- da8627894d070c688f2cc97716fb020b0d922a7c69b79c9a4ef23161414414e5
- 4260c3158f65ce17ae7d52cd8eb1e27c692b22093cf548606efcf306f3d5cc75
- 1b92d02b72a75f824aa3e78ab4d2aa15c4ce886e8392585c68b5c719242a4729"
+checksum="a95fd93aa16dc0de992ceb12282293d537a2f736570c858ffdd454ef6cf2346e
+ 02aa7773e955b57226d3485080a10c7bf1fce86997d3c452d9391c30c3185ae7
+ 3d9da749787d752c86dd09a2e1a2362c20a48bbe94b4c1f02a9f659f69409fc9
+ 5e31732aafee09a6a5cc60c4844b11c002f1ca0101ec61d9d1d07b51b2588876
+ a72092b35ba3789d78db716dd410c03fba0580ab6174a77ad5c4e65fad81c021
+ 0af40ca520d6e0c9e457dc44cdecf82726fa0fcd83f34b3b20a2864c9af3f4af"
 skip_extraction="buildid-${_buildid_version}.cmake
  web-client-desktop-${_clientdesktop_version}.tar.xz
  web-client-desktop-${_clientdesktop_version}.tar.xz.sha1

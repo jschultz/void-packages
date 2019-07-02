@@ -1,6 +1,6 @@
 # Template file for 'breeze'
 pkgname=breeze
-version=5.14.4
+version=5.15.5
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
@@ -10,13 +10,13 @@ makedepends="frameworkintegration-devel kcmutils-devel kdecoration-devel
  fftw-devel plasma-framework-devel"
 depends="breeze-icons frameworkintegration"
 short_desc="Breeze visual style for the Plasma Desktop"
-maintainer="Denis Revin <denis.revin@gmail.com>"
+maintainer="John <johnz@posteo.net>"
 license="GPL-2.0-or-later"
 homepage="https://projects.kde.org/projects/plasma/breeze"
 distfiles="${KDE_SITE}/plasma/${version}/${pkgname}-${version}.tar.xz"
-checksum=ce1e0d54309341eac8279e5f91f1458a4a827bc01c1ce389e526f93fb775b675
+checksum=a13de0472dacd5240c3d38d0841ea7b9098405cf1f8cff77504d1824d09dcac4
 
 if [ "$CROSS_BUILD" ]; then
-	hostmakedepends+=" kconfig-devel kcoreaddons-devel plasma-framework"
+	hostmakedepends+=" kpackage-devel kconfig-devel kcoreaddons-devel plasma-framework"
 	configure_args+=" -DKF5_HOST_TOOLING=/usr/lib/cmake"
 fi

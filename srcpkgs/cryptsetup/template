@@ -1,7 +1,7 @@
 # Template file for 'cryptsetup'
 pkgname=cryptsetup
-version=2.0.6
-revision=1
+version=2.1.0
+revision=2
 build_style=gnu-configure
 configure_args="--with-crypto_backend=openssl $(vopt_enable pwquality)
  --enable-cryptsetup-reencrypt --enable-libargon2"
@@ -9,12 +9,12 @@ hostmakedepends="pkg-config"
 makedepends="device-mapper-devel json-c-devel libressl-devel popt-devel
  libargon2-devel $(vopt_if pwquality 'libpwquality-devel')"
 short_desc="Setup virtual encryption devices under Linux dm-crypt"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-or-later"
 homepage="https://gitlab.com/cryptsetup/cryptsetup"
 changelog="https://gitlab.com/cryptsetup/cryptsetup/raw/master/docs/v${version}-ReleaseNotes"
 distfiles="${KERNEL_SITE}/utils/cryptsetup/v${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=7c51fae0f0e7ea9af0f515b2ac77009fb2969a6619ebab47d097dca38b083d30
+checksum=a3eeb2741f8f3376d16585191f3c60e067dd987e096c3c4b073fab7748b1c897
 subpackages="libcryptsetup cryptsetup-devel"
 
 build_options="pwquality"

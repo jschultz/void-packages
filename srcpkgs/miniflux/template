@@ -1,6 +1,6 @@
 # Template file for 'miniflux'
 pkgname=miniflux
-version=2.0.13
+version=2.0.16
 revision=1
 build_style=go
 go_import_path="github.com/miniflux/miniflux"
@@ -11,6 +11,12 @@ short_desc="Minimalist and opinionated feed reader written in Go"
 maintainer="Eivind Uggedal <eivind@uggedal.com>"
 license="Apache-2.0"
 homepage="https://miniflux.app"
+changelog="https://raw.githubusercontent.com/miniflux/miniflux/2.0.16/ChangeLog"
 distfiles="https://github.com/miniflux/miniflux/archive/${version}.tar.gz"
-checksum=c0213cdc2d6dbdb5cc8fd68a94fe8dd5d699b49faf6c77ad189376117e4e1ceb
-system_accounts="${pkgname}"
+checksum=0f255172fcf7442c835a00333943b291ef921a63711e16ab33f712bf577391dc
+system_accounts="_miniflux"
+
+post_install() {
+	vsv miniflux
+	vman miniflux.1
+}

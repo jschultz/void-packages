@@ -1,19 +1,20 @@
 # Template file for 'dolphin'
 pkgname=dolphin
-version=18.12.0
-revision=1
+version=19.04.2
+revision=2
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules python qt5-qmake qt5-host-tools kconfig kdoctools"
+hostmakedepends="extra-cmake-modules python qt5-qmake qt5-host-tools
+ kcoreaddons kconfig kdoctools"
 makedepends="baloo-widgets5-devel kcmutils-devel knewstuff-devel kactivities5-devel
- kinit-devel kparts-devel"
+ kinit-devel kparts-devel ksolid-devel"
 depends="kio-extras"
 short_desc="KDE File manager"
-maintainer="Denis Revin <denis.revin@gmail.com>"
+maintainer="John <johnz@posteo.net>"
 license="GPL-2.0-or-later, GFDL-1.2-or-later"
 homepage="https://userbase.kde.org/Dolphin"
 distfiles="${KDE_SITE}/applications/${version}/src/${pkgname}-${version}.tar.xz"
-checksum=837f8a43f09ef0e74e634cc5c1538cd5230f63c2a55675b3ae93f412d36cbf82
+checksum=1aacf622e1830ac458e3ab706b1a895eec467b9e0401c9bc88f1eb381205df79
 
 if [ "$CROSS_BUILD" ]; then
 	LDFLAGS=" -Wl,-rpath-link,../bin"

@@ -1,16 +1,16 @@
 # Template file for 'purpose'
 pkgname=purpose
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
-hostmakedepends="qt5-qmake qt5-host-tools extra-cmake-modules python"
+hostmakedepends="kcoreaddons qt5-qmake qt5-host-tools extra-cmake-modules python"
 makedepends="qt5-devel qt5-declarative-devel kcoreaddons-devel kconfig-devel kio-devel"
 short_desc="Offers available actions for a specific purpose"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/frameworks/purpose"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=6ebabb1f533a7243bec4654072bbcfa792ad3a6e06a2d1d44df525996e28dbf8
+checksum=078837cece687455e97d2c3721b95eaa4329e2026d8e0c3f55dbba32f15d4238
 
 purpose-devel_package() {
 	depends="${sourcepkg}>=${version}_${revision}"

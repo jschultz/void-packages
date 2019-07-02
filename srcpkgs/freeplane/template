@@ -1,16 +1,16 @@
 # Template file for 'freeplane'
 pkgname=freeplane
-version=1.7.3
+version=1.7.9
 revision=1
-noarch=yes
+archs=noarch
 hostmakedepends="apache-ant openjdk unzip gradle"
 depends="virtual?java-runtime"
 short_desc="Application for Mind Mapping, Knowledge Management, Project Management"
 maintainer="Andrea Brancaleoni <abc@pompel.me>"
-license="GPL-2"
+license="GPL-2.0-or-later"
 homepage="http://freeplane.sourceforge.net/"
 distfiles="$SOURCEFORGE_SITE/$pkgname/$pkgname%20stable/${pkgname}_src-$version.tar.gz"
-checksum=7f13a63e1f88d2cf6688239d9965c3ad234f3451a85bbb94f992e881edcc06f4
+checksum=b5fbaf4ed347cf40da8ff5f62d0d057ba371cca788fdef353f742abe8f732edc
 
 make_dirs="
 /usr/share/freeplane/fwdir/condperm/ 755 root root

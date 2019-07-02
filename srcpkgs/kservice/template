@@ -1,20 +1,20 @@
 # Template file for 'kservice'
 pkgname=kservice
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules flex bison"
+hostmakedepends="kcoreaddons extra-cmake-modules flex bison"
 makedepends="kconfig-devel kcrash-devel kdbusaddons-devel ki18n-devel kdoctools-devel"
 short_desc="KDE Plugin framework for desktop services"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-or-later, LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/frameworks/kservice"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=62da0b610f51f2b3e10d55b9af75dbdc70e680d8b89edbff6b11d26afd2f6319
+checksum=cdb349c29334e3c5f002f174311c47490c8ce95399c3f081b99dc2c6e95b0e05
 
 if [ "$CROSS_BUILD" ]; then
-	hostmakedepends+=" qt5-host-tools qt5-devel kdoctools"
+	hostmakedepends+=" qt5-host-tools qt5-devel kcoreaddons kdoctools"
 	configure_args+=" -DMEINPROC5_EXECUTABLE=/usr/bin/meinproc5"
 fi
 

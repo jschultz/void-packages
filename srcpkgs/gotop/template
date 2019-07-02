@@ -1,6 +1,6 @@
 # Template file for 'gotop'
 pkgname=gotop
-version=1.7.1
+version=3.0.0
 revision=1
 build_style=go
 go_import_path=github.com/cjbassi/gotop
@@ -10,7 +10,7 @@ maintainer="SolitudeSF <solitudesf@protonmail.com>"
 license="AGPL-3.0-or-later"
 homepage="https://github.com/cjbassi/gotop"
 distfiles="https://github.com/cjbassi/gotop/archive/${version}.tar.gz"
-checksum=0041d36e664870d0b461b80bba4a2fb5120af1030230f09e3e9887a67c117363
+checksum=d5147080bb6057f0bf0900b38438e89aa066959c845bdd4c84a9c9fe478b176f
 
 post_install() {
 	vlicense LICENSE

@@ -1,6 +1,6 @@
 # Template file for 'klavaro'
 pkgname=klavaro
-version=3.03
+version=3.08
 revision=1
 build_style=gnu-configure
 hostmakedepends="intltool pkg-config"
@@ -10,8 +10,9 @@ maintainer="newbluemoon <blaumolch@mailbox.org>"
 license="GPL-3.0-or-later"
 homepage="http://klavaro.sourceforge.net/en/"
 distfiles="${SOURCEFORGE_SITE}/klavaro/klavaro-${version}.tar.bz2"
-checksum=e0959f21e54e7f4700042a3a14987a7f8fc898701eab4f721ebcf4559a2c87b5
+checksum=2c6b0c2d0a7a6cb4c568d0c3a97267bf7fbac98b8b97b93bb81c6a8e9ac9bb62
 
 post_install() {
 	rm ${DESTDIR}/usr/lib/*.{a,so}
+	rm -r ${DESTDIR}/usr/include
 }

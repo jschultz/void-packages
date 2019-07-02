@@ -1,9 +1,9 @@
 # Template file for 'kmail-account-wizard'
 pkgname=kmail-account-wizard
-version=18.12.0
+version=19.04.2
 revision=1
 build_style=cmake
-hostmakedepends="extra-cmake-modules qt5-qmake qt5-host-tools python"
+hostmakedepends="extra-cmake-modules kcoreaddons qt5-qmake qt5-host-tools python"
 makedepends="libkleo-devel kross-devel kmailtransport-devel kidentitymanagement-devel
  pimcommon-devel knotifyconfig-devel ktexteditor-devel"
 short_desc="KMail account wizard"
@@ -11,4 +11,4 @@ maintainer="John <johnz@posteo.net>"
 license="GPL-2.0-or-later"
 homepage="https://community.kde.org/KDE_PIM"
 distfiles="${KDE_SITE}/applications/${version}/src/kmail-account-wizard-${version}.tar.xz"
-checksum=4f1258d6d1fb919c350593af6c26f209903549634a298e1a2f1ce3ac56f60313
+checksum=546830733e384f35f3ca625d9810f90931f65e0a4789f26fe316691e0254153e

@@ -1,6 +1,6 @@
 # Template file for 'bcc'
 pkgname=bcc
-version=0.7.0
+version=0.10.0
 revision=1
 build_style=cmake
 configure_args="-DREVISION=${version}"
@@ -11,15 +11,16 @@ short_desc="BPF-based Linux IO analysis, networking, monitoring, and more"
 maintainer="Leah Neukirchen <leah@vuxu.org>"
 license="Apache-2.0"
 homepage="https://github.com/iovisor/bcc"
-distfiles="https://github.com/iovisor/${pkgname}/archive/v${version}.tar.gz"
-checksum=ac92f25861453b71943bd2ffbd5ed0b906e62a000d18ba61b178a1c13e57a32d
+distfiles="https://github.com/iovisor/${pkgname}/archive/v${version}.tar.gz
+ https://github.com/libbpf/libbpf/archive/75db50f4a09d9dbac49b1ace9e4b6a722bdf0519.tar.gz"
+checksum="b02a75bc469a33e6781c915361a49a97d4ec7b45d74cfeffb22693247438d4b0
+ 22a7ba2343df699a0332015aa54d4a8aeba1756f58308fed120b60a8900e9d55"
 nocross=yes # https://github.com/voidlinux/void-packages/issues/4738
 
-case "$XBPS_TARGET_MACHINE" in
-	i686*) broken="__uint128t not available" ;;
-esac
-
 post_extract() {
+	rm -rf src/cc/libbpf
+	mv ../libbpf* src/cc/libbpf
+
 	sed -i '/tests/d' CMakeLists.txt  # break on musl
 }
 bcc-tools_package() {

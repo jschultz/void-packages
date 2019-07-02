@@ -1,8 +1,8 @@
 # Template file for 'urlscan'
 pkgname=urlscan
-version=0.9.1
+version=0.9.3
 revision=1
-noarch=yes
+archs=noarch
 build_style=python3-module
 pycompile_module="urlscan"
 hostmakedepends="python3-setuptools"
@@ -11,5 +11,5 @@ short_desc="View/select the URLs in an email message or file"
 maintainer="Crestwave <crest.wave@yahoo.com>"
 license="GPL-2.0-or-later"
 homepage="https://github.com/firecat53/urlscan"
-distfiles="${homepage}/archive/${version}.tar.gz"
-checksum=6d5c2537e1f05a3419d5dcac341c3d692d5c25a8549ab82a63b112af91ff332c
+distfiles="https://github.com/firecat53/urlscan/archive/${version}.tar.gz"
+checksum=d3eaef486df70da85614b51a383fa5d570b6253c147349da29df04cd36ed7955

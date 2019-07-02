@@ -1,16 +1,16 @@
 # Template file for 'util-linux'
 pkgname=util-linux
-version=2.33
-revision=2
+version=2.34
+revision=1
 hostmakedepends="automake bison gettext-devel libtool pkg-config"
 makedepends="libcap-ng-devel pam-devel readline-devel zlib-devel"
 checkdepends="ncurses" # Some tests require terminfo-entries
 short_desc="Miscellaneous linux utilities"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-or-later"
 homepage="https://www.kernel.org/pub/linux/utils/util-linux/"
-distfiles="${KERNEL_SITE}/utils/${pkgname}/v${version%.1}/${pkgname}-${version}.tar.xz"
-checksum=f261b9d73c35bfeeea04d26941ac47ee1df937bd3b0583e748217c1ea423658a
+distfiles="${KERNEL_SITE}/utils/${pkgname}/v${version}/${pkgname}-${version}.tar.xz"
+checksum=743f9d0c7252b6db246b659c1e1ce0bd45d8d4508b4dfa427bbb4a3e9b9f62b5
 
 # Create uuidd system account for uuidd.
 system_accounts="_uuidd"
@@ -30,6 +30,7 @@ alternatives="
 pre_configure() {
 	NOCONFIGURE=1 ./autogen.sh
 }
+
 do_configure() {
 	./configure ${configure_args} \
 		--exec-prefix=/usr --libdir=/usr/lib \
@@ -42,12 +43,15 @@ do_configure() {
 		--without-udev --without-python \
 		--enable-write
 }
+
 do_build() {
 	make ${makejobs}
 }
+
 do_check() {
 	make -k check
 }
+
 do_install() {
 	make usrsbin_execdir=/usr/bin DESTDIR=${DESTDIR} install
 

@@ -1,6 +1,6 @@
 # Template file for 'turbovnc'
 pkgname=turbovnc
-version=2.2
+version=2.2.2
 revision=1
 build_style=cmake
 configure_args="-DTJPEG_LIBRARY=/usr/lib/libturbojpeg.so -DTVNC_BUILDJAVA=0
@@ -9,15 +9,15 @@ hostmakedepends="rsync"
 makedepends="libjpeg-turbo-devel libXt-devel libXaw-devel libXcursor-devel pam-devel
  zlib-devel freetype-devel bzip2-devel libressl-devel"
 depends="perl"
-short_desc="An optimized version of TightVNC - a VNC client"
-maintainer="Juan RP <xtraeme@voidlinux.eu>"
+short_desc="Optimized version of TightVNC VNC client"
+maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-or-later"
 homepage="http://virtualgl.org"
 distfiles="${SOURCEFORGE_SITE}/turbovnc/${pkgname}-${version}.tar.gz"
-checksum=da90eb2abf6412d3331af0f1a76b857194baabcf080dcd0b5dd4e040fed9addb
+checksum=7f1593a3db88dc800d0f82091252ca293b1980a28417b9834ce713eb7e0d09bc
 
-conf_files="/etc/turbovncserver.conf /etc/turbovncserver-security.conf"
-only_for_archs="i686 i686-musl x86_64 x86_64-musl"
+conf_files="/etc/*.conf"
+archs="i686* x86_64* ppc64*"
 conflicts="tigervnc>=0"
 
 # Need this to make <sys/socket.h> define struct ucred with musl

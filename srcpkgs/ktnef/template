@@ -1,16 +1,17 @@
 # Template file for 'ktnef'
 pkgname=ktnef
-version=18.12.0
+version=19.04.2
 revision=1
 build_style=cmake
-hostmakedepends="extra-cmake-modules qt5-qmake qt5-host-tools python"
+hostmakedepends="extra-cmake-modules qt5-qmake qt5-host-tools python
+ kcoreaddons"
 makedepends="kcalutils-devel kcontacts-devel"
 short_desc="API for handling TNEF data"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://community.kde.org/KDE_PIM"
 distfiles="${KDE_SITE}/applications/${version}/src/ktnef-${version}.tar.xz"
-checksum=8b658a74ed994740ce358356a60f2a0333068adf3e64cddcf333c162d47b49b1
+checksum=aed9679d789ebf016644475e5450991c4da7a029bb83a1c8853396da14a983fd
 
 ktnef-devel_package() {
 	depends="${sourcepkg}>=${version}_${revision}"

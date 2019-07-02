@@ -1,32 +1,47 @@
 # Template file for 'i2pd'
 pkgname=i2pd
-version=2.22.0
-revision=2
+version=2.26.0
+revision=1
 build_style=gnu-makefile
 make_build_args="USE_UPNP=yes"
 makedepends="zlib-devel boost-devel libressl-devel miniupnpc-devel
  libatomic-devel"
-short_desc="I2P Daemon - a full-featured C++ implementation of I2P client"
+short_desc="Full-featured C++ implementation of I2P client"
 maintainer="Obosob <obosob@riseup.net>"
-license="BSD"
-homepage="http://i2pd.website/"
+license="BSD-3-Clause"
+homepage="https://i2pd.website/"
+changelog="https://raw.githubusercontent.com/PurpleI2P/i2pd/openssl/ChangeLog"
 distfiles="https://github.com/PurpleI2P/i2pd/archive/${version}.tar.gz"
-checksum=6547d7a560482c5eda9106ae19267bc8afbb6af48fed3bebf423ade28103e173
+checksum=2ae18978c8796bb6b45bc8cfe4e1f25377e0cfc9fcf9f46054b09dc3384eef63
+
+conf_files="
+ /etc/i2pd/i2pd.conf
+ /etc/i2pd/tunnels.conf"
 system_accounts="_i2pd"
-disable_parallel_build=true
+_i2pd_homedir="/var/lib/i2pd"
+make_dirs="/var/lib/i2pd 0700 _i2pd _i2pd"
 
 case "${XBPS_TARGET_MACHINE}" in
 	aarch64*|armv*|mips*) make_build_args+=" USE_AESNI=no USE_AVX=no" ;;
 esac
 
+pre_install() {
+	# Log errors to syslog
+	vsed -e "s/^# log = .*/log = syslog/" \
+		-e "s/^# loglevel = .*/loglevel = error/" \
+		-i contrib/i2pd.conf
+}
+
 do_install() {
 	vbin i2pd
 	vman debian/i2pd.1
-	vsconf contrib/i2pd.conf
-	vsconf contrib/tunnels.conf
-	vsconf contrib/subscriptions.txt
+	vinstall contrib/i2pd.conf 644 etc/i2pd
+	vinstall contrib/tunnels.conf 644 etc/i2pd
 	vlicense LICENSE
-}
-post_install() {
 	vsv i2pd
+	# Family, reseed and router certificates
+	vmkdir usr/share/i2pd
+	vcopy contrib/certificates usr/share/i2pd
+	vmkdir var/lib/i2pd
+	ln -s /usr/share/i2pd/certificates ${DESTDIR}/var/lib/i2pd/certificates
 }

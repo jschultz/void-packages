@@ -1,17 +1,17 @@
 # Template file for 'ktexteditor'
 pkgname=ktexteditor
-version=5.53.0
+version=5.59.0
 revision=1
 build_style=cmake
 configure_args="-DBUILD_TESTING=OFF"
-hostmakedepends="extra-cmake-modules pkg-config"
+hostmakedepends="kcoreaddons extra-cmake-modules pkg-config"
 makedepends="kparts-devel libgit2-devel qt5-xmlpatterns-devel syntax-highlighting-devel"
 short_desc="KDE Full text editor component"
 maintainer="John <johnz@posteo.net>"
 license="LGPL-2.0-or-later"
 homepage="https://projects.kde.org/projects/frameworks/ktexteditor"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=ef2c831120e145e21e1f76b32a2748fa60ee42f4c93603ed5426f167662396c1
+checksum=7325eb0e32d36417cffd3d566aef60083fd884f403f23f88823eecc19e255a6f
 
 if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" qt5-host-tools qt5-qmake python kauth kparts"

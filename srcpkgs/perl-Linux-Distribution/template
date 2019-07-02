@@ -2,14 +2,14 @@
 pkgname=perl-Linux-Distribution
 version=0.23
 revision=2
-noarch=yes
+archs=noarch
 wrksrc="Linux-Distribution-$version"
 build_style=perl-module
 hostmakedepends="perl"
 makedepends="perl"
 depends="perl"
 short_desc="Linux::Distribution - Detect the running Linux distribution"
-maintainer="Orphaned <orphan@voidlinux.eu>"
+maintainer="Orphaned <orphan@voidlinux.org>"
 license="Artistic-1.0-Perl, GPL-1.0-or-later"
 homepage="https://metacpan.org/release/Linux-Distribution"
 distfiles="${CPAN_SITE}/Linux/Linux-Distribution-${version}.tar.gz"

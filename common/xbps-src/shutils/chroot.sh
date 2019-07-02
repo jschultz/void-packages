@@ -9,17 +9,11 @@ env_passthrough() {
 # FIXME: $XBPS_FFLAGS is not set when chroot_init() is run
 # It is set in common/build-profiles/bootstrap.sh but lost somewhere?
 chroot_init() {
-    XBPSSRC_CF=$XBPS_MASTERDIR/etc/xbps/xbps-src.conf
-
     mkdir -p $XBPS_MASTERDIR/etc/xbps
 
-    cat > $XBPSSRC_CF <<_EOF
+    cat > $XBPS_MASTERDIR/etc/xbps/xbps-src.conf <<_EOF
 # Generated configuration file by xbps-src, DO NOT EDIT!
-_EOF
-    if [ -e "$XBPS_CONFIG_FILE" ]; then
-        grep -E '^XBPS_.*' $XBPS_CONFIG_FILE >> $XBPSSRC_CF
-    fi
-    cat >> $XBPSSRC_CF <<_EOF
+$(grep -E '^XBPS_.*' "$XBPS_CONFIG_FILE")
 XBPS_MASTERDIR=/
 XBPS_CFLAGS="$XBPS_CFLAGS"
 XBPS_CXXFLAGS="$XBPS_CXXFLAGS"
@@ -27,9 +21,8 @@ XBPS_FFLAGS="-fPIC -pipe"
 XBPS_CPPFLAGS="$XBPS_CPPFLAGS"
 XBPS_LDFLAGS="$XBPS_LDFLAGS"
 XBPS_HOSTDIR=/host
+# End of configuration file.
 _EOF
-
-    echo "# End of configuration file." >> $XBPSSRC_CF
 
     # Create custom script to start the chroot bash shell.
     cat > $XBPS_MASTERDIR/bin/xbps-shell <<_EOF
@@ -39,24 +32,16 @@ XBPS_SRC_VERSION="$XBPS_SRC_VERSION"
 
 . /etc/xbps/xbps-src.conf
 
-PATH=/void-packages:/usr/bin:/usr/sbin
+PATH=/void-packages:/usr/bin
 
 update-ca-certificates
 
-exec env -i -- SHELL=/bin/sh PATH="\$PATH" DISTCC_HOSTS="\$XBPS_DISTCC_HOSTS" DISTCC_DIR="/host/distcc" @@XARCH@@ \
-    @@CHECK@@ CCACHE_DIR="/host/ccache" IN_CHROOT=1 LC_COLLATE=C LANG=en_US.UTF-8 TERM=linux HOME="/tmp" \
+exec env -i -- SHELL=/bin/sh PATH="\$PATH" DISTCC_HOSTS="\$XBPS_DISTCC_HOSTS" DISTCC_DIR="/host/distcc" \
+    ${XBPS_ARCH+XBPS_ARCH=$XBPS_ARCH} ${XBPS_CHECK_PKGS+XBPS_CHECK_PKGS=$XBPS_CHECK_PKGS} \
+    CCACHE_DIR="/host/ccache" IN_CHROOT=1 LC_COLLATE=C LANG=en_US.UTF-8 TERM=linux HOME="/tmp" \
     PS1="[\u@$XBPS_MASTERDIR \W]$ " /bin/bash +h
 _EOF
-    if [ -n "$XBPS_ARCH" ]; then
-        sed -e "s,@@XARCH@@,XBPS_ARCH=${XBPS_ARCH},g" -i $XBPS_MASTERDIR/bin/xbps-shell
-    else
-        sed -e 's,@@XARCH@@,,g' -i $XBPS_MASTERDIR/bin/xbps-shell
-    fi
-    if [ -z "$XBPS_CHECK_PKGS" ]; then
-        sed -e 's,@@CHECK@@,,g' -i $XBPS_MASTERDIR/bin/xbps-shell
-    else
-        sed -e "s,@@CHECK@@,XBPS_CHECK_PKGS=$XBPS_CHECK_PKGS,g" -i $XBPS_MASTERDIR/bin/xbps-shell
-    fi
+
     chmod 755 $XBPS_MASTERDIR/bin/xbps-shell
 
     cp -f /etc/resolv.conf $XBPS_MASTERDIR/etc
@@ -149,7 +134,7 @@ chroot_sync_repos() {
             ${XBPS_MASTERDIR}/etc/xbps.d/22-repository-remote-x86_64.conf
     fi
 
-    # if -N is set, comment out remote repositories from xbps.conf.
+    # if -N is set, get rid of remote repos from x86_64 (glibc).
     if [ -n "$XBPS_SKIP_REMOTEREPOS" ]; then
         rm -f ${XBPS_MASTERDIR}/etc/xbps.d/20-repository-remote.conf
         rm -f ${XBPS_MASTERDIR}/etc/xbps.d/22-repository-remote-x86_64.conf
@@ -197,7 +182,7 @@ chroot_handler() {
     [ -z "$action" -a -z "$pkg" ] && return 1
 
     case "$action" in
-        fetch|extract|build|check|configure|install|install-destdir|pkg|build-pkg|bootstrap-update|chroot)
+        fetch|extract|patch|build|check|configure|install|install-destdir|pkg|build-pkg|bootstrap-update|chroot)
             chroot_prepare || return $?
             chroot_init || return $?
             chroot_sync_repos || return $?
@@ -226,9 +211,10 @@ chroot_handler() {
         [ -n "$XBPS_BINPKG_EXISTS" ] && arg="$arg -E"
 
         action="$arg $action"
-        env -i -- `env_passthrough` PATH="/usr/bin:/usr/sbin:$PATH" SHELL=/bin/sh \
+        env -i -- `env_passthrough` PATH="/usr/bin" SHELL=/bin/sh \
             HOME=/tmp IN_CHROOT=1 LC_COLLATE=C LANG=en_US.UTF-8 \
             SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
+            XBPS_ALLOW_CHROOT_BREAKOUT="$XBPS_ALLOW_CHROOT_BREAKOUT" \
             $XBPS_COMMONDIR/chroot-style/${XBPS_CHROOT_CMD:=uunshare}.sh \
             $XBPS_MASTERDIR $XBPS_DISTDIR "$XBPS_HOSTDIR" "$XBPS_CHROOT_CMD_ARGS" \
             /void-packages/xbps-src $action $pkg

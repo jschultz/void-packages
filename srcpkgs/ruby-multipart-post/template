@@ -1,8 +1,8 @@
 # Template file for 'ruby-multipart-post'
 pkgname=ruby-multipart-post
 version=2.0.0
-revision=1
-noarch=yes
+revision=2
+archs=noarch
 build_style=gem
 short_desc="Use with Net::HTTP to do multipart form posts"
 maintainer="maxice8 <thinkabit.ukim@gmail.com>"

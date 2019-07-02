@@ -1,8 +1,8 @@
 # Template file for 'extra-cmake-modules'
 pkgname=extra-cmake-modules
-version=5.53.0
+version=5.59.0
 revision=1
-noarch=yes
+archs=noarch
 build_style=cmake
 configure_args="-DBUILD_HTML_DOCS=OFF -DBUILD_TESTING=OFF"
 hostmakedepends="python-Sphinx qt5-tools"
@@ -12,7 +12,7 @@ maintainer="John <johnz@posteo.net>"
 license="BSD-3-Clause"
 homepage="https://projects.kde.org/projects/kdesupport/extra-cmake-modules"
 distfiles="${KDE_SITE}/frameworks/${version%.*}/${pkgname}-${version}.tar.xz"
-checksum=2da177fb849d8b4da2442d19a99c53040c1be5fee65b7e863d550290cfa7b41d
+checksum=1a630b242242ac32d20d14e7ae5645aa28a47676eae0e62ed76af8bc1f56c438
 
 post_install() {
 	vlicense COPYING-CMAKE-SCRIPTS

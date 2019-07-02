@@ -65,7 +65,7 @@ setup_pkg_depends() {
 
 # Install a required package dependency, like:
 #
-#	xbps-install -Ay <pkgname>
+#	xbps-install -IAy <pkgname>
 #
 # Returns 0 if package already installed or installed successfully.
 # Any other error number otherwise.
@@ -77,28 +77,37 @@ install_pkg_from_repos() {
     tmplogf=${XBPS_STATEDIR}/xbps_${XBPS_TARGET_MACHINE}_bdep_${pkg}.log
 
     if [ -n "$cross" ]; then
-        $XBPS_INSTALL_XCMD -Ayd "$pkg" >$tmplogf 2>&1
+        $XBPS_INSTALL_XCMD -IAy "$pkg" >$tmplogf 2>&1
     else
-        $XBPS_INSTALL_CMD -Ayd "$pkg" >$tmplogf 2>&1
+        $XBPS_INSTALL_CMD -IAy "$pkg" >$tmplogf 2>&1
     fi
     rval=$?
-    if [ $rval -ne 0 -a $rval -ne 17 ]; then
-        # xbps-install can return:
-        #
-        # SUCCESS  (0): package installed successfully.
-        # ENOENT   (2): package missing in repositories.
-        # ENXIO    (6): package depends on invalid dependencies.
-        # EAGAIN  (11): package conflicts.
-        # EEXIST  (17): package already installed.
-        # ENODEV  (19): package depends on missing dependencies.
-        # ENOTSUP (95): no repositories registered.
-        #
-        [ -z "$XBPS_KEEP_ALL" ] && remove_pkg_autodeps
-        msg_red "$pkgver: failed to install '$1' dependency! (error $rval)\n"
-        cat $tmplogf
-        msg_error "Please see above for the real error, exiting...\n"
-    fi
-    [ $rval -eq 17 ] && rval=0
+    # xbps-install can return:
+    #
+    # SUCCESS  (0): package installed successfully.
+    # ENOENT   (2): package missing in repositories.
+    # ENXIO    (6): package depends on invalid dependencies.
+    # EAGAIN  (11): package conflicts.
+    # EEXIST  (17): file conflicts in transaction (XBPS_FLAG_IGNORE_FILE_CONFLICTS unset)
+    # ENODEV  (19): package depends on missing dependencies.
+    # ENOTSUP (95): no repositories registered.
+    #
+    case "$rval" in
+        0) # success, check if there are errors.
+           errortmpf=$(mktemp) || exit 1
+           grep ^ERROR $tmplogf > $errortmpf
+           [ -s $errortmpf ] && cat $errortmpf
+           rm -f $errortmpf
+           ;;
+        *)
+           [ -z "$XBPS_KEEP_ALL" ] && remove_pkg_autodeps
+           msg_red "$pkgver: failed to install '$1' dependency! (error $rval)\n"
+           cat $tmplogf
+           rm -f $tmplogf
+           msg_error "Please see above for the real error, exiting...\n"
+           ;;
+    esac
+    rm -f $tmplogf
     return $rval
 }
 
@@ -199,6 +208,10 @@ install_pkg_deps() {
 
     [ -n "$build_style" ] && style=" [$build_style]"
 
+    for s in $build_helper; do
+        style+=" [$s]"
+    done
+
     if [ "$pkg" != "$targetpkg" ]; then
         msg_normal "$pkgver: building${style} (dependency of $targetpkg) ...\n"
     else
@@ -213,13 +226,13 @@ install_pkg_deps() {
     # Host build dependencies.
     #
     for i in ${host_build_depends}; do
+        _realpkg=$($XBPS_UHELPER_CMD getpkgname "$i" 2>/dev/null)
         check_pkgdep_matched "$i" version
         local rval=$?
         if [ $rval -eq 0 ]; then
             echo "   [host] ${i}: installed."
             continue
         elif [ $rval -eq 1 ]; then
-            _realpkg="$($XBPS_UHELPER_CMD getpkgname $i 2>/dev/null)"
             iver=$($XBPS_UHELPER_CMD version ${_realpkg})
             if [ $? -eq 0 -a -n "$iver" ]; then
                 echo "   [host] ${i}: installed $iver (virtualpkg)."
@@ -236,6 +249,13 @@ install_pkg_deps() {
                 continue
             else
                 echo "   [host] ${i}: not found."
+                if [ -z "$cross" ]; then
+                    if [ "${_realpkg}" = "$targetpkg" ]; then
+                        msg_error "${pkg}: [host] build loop detected: ${_realpkg} <-> ${targetpkg} [depends on itself]\n"
+                    elif [ "${_realpkg}" = "$pkg" ]; then
+                        msg_error "${pkg}: [host] build loop detected: $pkg <-> ${_realpkg}\n"
+                    fi
+                fi
             fi
         fi
         host_missing_deps+=("${i}")
@@ -245,13 +265,13 @@ install_pkg_deps() {
     # Host check dependencies.
     #
     for i in ${host_check_depends}; do
+        _realpkg="$($XBPS_UHELPER_CMD getpkgname $i 2>/dev/null)"
         check_pkgdep_matched "$i" version
         local rval=$?
         if [ $rval -eq 0 ]; then
             echo "   [check] ${i}: installed."
             continue
         elif [ $rval -eq 1 ]; then
-            _realpkg="$($XBPS_UHELPER_CMD getpkgname $i 2>/dev/null)"
             iver=$($XBPS_UHELPER_CMD version ${_realpkg})
             if [ $? -eq 0 -a -n "$iver" ]; then
                 echo "   [check] ${i}: installed $iver (virtualpkg)."
@@ -268,6 +288,11 @@ install_pkg_deps() {
                 continue
             else
                 echo "   [check] ${i}: not found."
+                if [ "${_realpkg}" = "$targetpkg" ]; then
+                    msg_error "${pkg}: [check] build loop detected: ${_realpkg} <-> ${targetpkg} [depends on itself]!\n"
+                elif [ "${_realpkg}" = "$pkg" ]; then
+                    msg_error "${pkg}: [check] build loop detected: $pkg <-> ${_realpkg}\n"
+                fi
             fi
         fi
         check_missing_deps+=("${i}")
@@ -307,6 +332,11 @@ install_pkg_deps() {
                 continue
             else
                 echo "   [target] ${i}: not found."
+                if [ "${_realpkg}" = "$targetpkg" ]; then
+                    msg_error "${pkg}: [target] build loop detected: ${_realpkg} <-> ${targetpkg} [depends on itself]\n"
+                elif [ "${_realpkg}" = "$pkg" ]; then
+                    msg_error "${pkg}: [target] build loop detected: $pkg <-> ${_realpkg}\n"
+                fi
             fi
         fi
         missing_deps+=("${i}")
@@ -364,6 +394,11 @@ install_pkg_deps() {
                 echo "   [runtime] ${_realpkg}: not found."
             fi
         fi
+        if [ "${_realpkg}" = "$targetpkg" ]; then
+            msg_error "${pkg}: [run] build loop detected: ${_realpkg} <-> ${targetpkg} [depends on itself]\n"
+        elif [ "${_realpkg}" = "$pkg" ]; then
+            msg_error "${pkg}: [run] build loop detected: $pkg <-> ${_realpkg}\n"
+        fi
         missing_rdeps+=("${_realpkg}")
     done
 
@@ -410,6 +445,7 @@ install_pkg_deps() {
     for i in ${missing_deps[@]}; do
         # packages not found in repos, install from source.
         (
+
         curpkgdepname=$($XBPS_UHELPER_CMD getpkgname "$i" 2>/dev/null)
         setup_pkg $curpkgdepname $cross
         exec env XBPS_DEPENDENCY=1 XBPS_BINPKG_EXISTS=1 \

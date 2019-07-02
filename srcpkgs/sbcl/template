@@ -1,8 +1,8 @@
 # Template file for 'sbcl'
 pkgname=sbcl
-version=1.4.15
+version=1.5.4
 revision=1
-only_for_archs="i686 x86_64 x86_64-musl armv7l aarch64"
+archs="i686 x86_64* armv7l aarch64"
 
 hostmakedepends="iana-etc"
 makedepends="zlib-devel"
@@ -13,7 +13,7 @@ license="custom"
 homepage="http://www.sbcl.org/"
 changelog="http://www.sbcl.org/news.html"
 distfiles="${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}-source.tar.bz2"
-checksum=486c3bcf1338d0023be93725bac2ac298811cd30a5e2b94d7491ddad1fa1372e
+checksum=ec872be63697041fbb1c6324382b736c2aecb2fc1edb9961f9bfe7b017c1f45c
 nocross=yes
 nopie=yes
 
@@ -21,7 +21,7 @@ _bootstrap_lisp="bash ../sbcl-*-linux/run-sbcl.sh --no-sysinit --no-userinit --d
 case "$XBPS_TARGET_MACHINE" in
 x86_64)
 	distfiles+=" ${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-${version}-x86-64-linux-binary.tar.bz2"
-	checksum+=" f3be1d05db692013a8f153bb8ac452d5e34b62a2aab0284a7adaad6966872747"
+	checksum+=" 9c6625cdb167e9450566f309686faa8a3fbf6b1a6de5697f3777836a4da0d100"
 	;;
 i686)
 	distfiles+=" ${SOURCEFORGE_SITE}/${pkgname}/${pkgname}-1.4.3-x86-linux-binary.tar.bz2"
@@ -47,7 +47,6 @@ do_build() {
 	bash make.sh \
 		"$_bootstrap_lisp" \
 		--without-sb-test --with-sb-core-compression --prefix=/usr
-	make -C doc/manual info
 }
 
 do_install() {
@@ -57,7 +56,7 @@ do_install() {
 }
 
 sbcl-source_package() {
-	noarch=yes
+	archs="noarch"
 	depends="${sourcepkg}>=${version}_${revision}"
 	short_desc+=" -- source files"
 	pkg_install() {

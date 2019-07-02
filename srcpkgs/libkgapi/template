@@ -1,9 +1,10 @@
 # Template file for 'libkgapi'
 pkgname=libkgapi
-version=18.12.0
+version=19.04.2
 revision=1
 build_style=cmake
-hostmakedepends="extra-cmake-modules qt5-host-tools qt5-qmake python3"
+hostmakedepends="extra-cmake-modules qt5-host-tools qt5-qmake python3
+ kcoreaddons"
 makedepends="kcalcore-devel kcontacts-devel kio-devel qt5-webengine-devel
  qt5-webchannel-devel qt5-location-devel"
 short_desc="KDE-based library for accessing various Google services"
@@ -11,7 +12,7 @@ maintainer="John <johnz@posteo.net>"
 license="LGPL-2.1-or-later"
 homepage="https://projects.kde.org/projects/extragear/libs/libkgapi"
 distfiles="${KDE_SITE}/applications/${version}/src/${pkgname}-${version}.tar.xz"
-checksum=7712137b6792bdcf89c34b9a742d0272a99c7e2eac5a7197dc68d567dcb9e934
+checksum=a9eda4c03ba76653c7b035a532dc53c7042153f18f55bec0166aca258d73217a
 
 libkgapi-devel_package() {
 	short_desc+=" - development files"

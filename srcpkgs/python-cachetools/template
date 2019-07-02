@@ -1,8 +1,8 @@
 # Template file for 'python-cachetools'
 pkgname=python-cachetools
-version=3.0.0
+version=3.1.1
 revision=1
-noarch=yes
+archs=noarch
 wrksrc="cachetools-${version}"
 build_style=python-module
 pycompile_module="cachetools"
@@ -13,14 +13,14 @@ maintainer="Peter Bui <pbui@github.bx612.space>"
 license="MIT"
 homepage="https://github.com/tkem/cachetools/"
 distfiles="${PYPI_SITE}/c/cachetools/cachetools-${version}.tar.gz"
-checksum=4621965b0d9d4c82a79a29edbad19946f5e7702df4afae7d1ed2df951559a8cc
+checksum=8ea2d3ce97850f31e4a08b0e2b5e6c34997d7216a9d2c98e0f3978630d4da69a
 
 post_install() {
 	vlicense LICENSE
 }
 
 python3-cachetools_package() {
-	noarch=yes
+	archs=noarch
 	depends="python3"
 	pycompile_module="cachetools"
 	short_desc="${short_desc/Python2/Python3}"
