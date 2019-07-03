@@ -25,14 +25,6 @@ checksum=370f5fcfe2bbf0c76fc394d338cd72ed7f2044b67f4eb4b115eb074ccfc70d63
 build_options="gir"
 build_options_default="gir"
 
-libpoppler87_package() {
-	depends="poppler-data"
-	short_desc+=" - poppler runtime library"
-	pkg_install() {
-		vmove usr/lib/libpoppler.a
-	}
-}
-
 poppler-cpp-devel_package() {
 	depends="libstdc++-devel zlib-devel poppler-devel-${version}_${revision} poppler-cpp-${version}_${revision}"
 	short_desc+=" - C++ bindings (development files)"
