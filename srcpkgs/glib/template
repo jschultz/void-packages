@@ -4,7 +4,8 @@ version=2.60.4
 revision=1
 build_style=meson
 configure_args="-Dfam=false -Dman=true -Dselinux=disabled
- -Dgtk_doc=$(vopt_if gtk_doc true false) -Ddefault_library=both"
+ -Dgtk_doc=$(vopt_if gtk_doc true false) -Ddefault_library=both
+ -Ddefault_library=both -Db_lto=false"
 hostmakedepends="pkg-config libxslt docbook-xsl $(vopt_if gtk_doc gtk-doc)"
 makedepends="zlib-devel pcre-devel libffi-devel dbus-devel elfutils-devel libmount-devel"
 checkdepends="desktop-file-utils shared-mime-info tzdata"
